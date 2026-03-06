@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>OBL SwiftOnboard - Phase 1 Review</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            /* OBL Custom Premium Theme */
+            --bg-color: #0d1117;
+            --surface-color: rgba(22, 27, 34, 0.75);
+            --border-color: rgba(48, 54, 61, 0.8);
+
+            --accent-primary: #FFB000;
+            --accent-secondary: #00E676;
+            --accent-tertiary: #00B0FF;
+            --gradient-text: linear-gradient(135deg, #FFCC00 0%, #FF8F00 100%);
+
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1f2430 0%, #0d1117 60%, #050608 100%);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Glassmorphism background elements */
+        .bg-glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(255, 176, 0, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .reveal {
+            background: transparent;
+            font-family: 'Outfit', sans-serif;
+            z-index: 1;
+        }
+
+        /* Typography */
+        .reveal h1,
+        .reveal h2,
+        .reveal h3,
+        .reveal h4,
+        .reveal h5,
+        .reveal h6 {
+            font-family: 'Outfit', sans-serif;
+            text-transform: none;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+
+        .reveal h1 {
+            font-size: 3.5em;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 12px rgba(255, 176, 0, 0.2));
+            font-weight: 800;
+        }
+
+        .reveal h2 {
+            color: var(--text-main);
+            font-size: 2.5em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .reveal h2::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 4px;
+            background: var(--accent-primary);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .reveal h3 {
+            color: var(--accent-primary);
+            font-size: 1.8em;
+            font-weight: 500;
+        }
+
+        .reveal p,
+        .reveal li {
+            color: var(--text-main);
+            font-size: 1.15em;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .highlight {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .green-text {
+            color: var(--accent-secondary);
+        }
+
+        .blue-text {
+            color: var(--accent-tertiary);
+        }
+
+        /* Premium Glass Cards */
+        .card-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px 30px;
+            flex: 1;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-text);
+        }
+
+        .card i {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: var(--accent-primary);
+        }
+
+        .card h4 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            max-width: 240px;
+            margin-bottom: 30px !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Lists */
+        .list-container {
+            background-color: var(--surface-color);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .reveal ul {
+            display: block;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .reveal ul li {
+            margin-bottom: 20px;
+            padding-left: 35px;
+            position: relative;
+        }
+
+        .reveal ul li::before {
+            content: '\f058';
+            /* Check circle */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--accent-primary);
+            font-size: 0.9em;
+        }
+
+        .reveal ul.bad-list li::before {
+            content: '\f057';
+            /* Times circle */
+            color: #ff5252;
+        }
+
+        /* Progress auto color */
+        .reveal .controls,
+        .reveal .progress {
+            color: var(--accent-primary);
+        }
+
+        .reveal .progress {
+            height: 4px;
+        }
+
+        .reveal .progress span {
+            background-color: var(--accent-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Title Slide -->
+            <section>
+                <img src="logo.png" alt="Orientbell Logo" class="logo" onerror="this.style.display='none'">
+                <h1>SwiftOnboard</h1>
+                <h3>Phase 1 Project Review</h3>
+                <p style="color: var(--text-muted); font-size: 1.2em; font-weight: 400;">Next-Gen Dealer & Customer
+                    Digital Onboarding Ecosystem</p>
+                <div
+                    style="margin-top: 50px; border-top: 1px solid var(--border-color); padding-top: 20px; width: 60%; margin-left: auto; margin-right: auto;">
+                    <p
+                        style="font-size: 0.8em; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase;">
+                        Hackathon 2025</p>
+                </div>
+            </section>
+
+            <!-- Problem Slide -->
+            <section>
+                <h2>The Challenge</h2>
+                <div class="list-container" style="width: 80%;">
+                    <ul class="bad-list">
+                        <li><strong>Paper-Heavy Processes:</strong> Fragmented and inefficient manual submission flows.
+                        </li>
+                        <li><strong>High Error Margins:</strong> Manual data entry leading to costly mistakes and
+                            document bounce-backs.</li>
+                        <li><strong>Zero Visibility:</strong> Complete lack of transparency for partners during the
+                            onboarding journey.</li>
+                        <li><strong>Slow Turnaround:</strong> Severely delayed "time-to-market" for establishing new
+                            business relationships.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Solution Slide -->
+            <section>
+                <h2>Our Ecosystem Solution</h2>
+                <p style="margin-bottom: 40px; color: var(--text-muted);">A seamless, automated, and secure digital
+                    platform.</p>
+
+                <div class="card-container">
+                    <div class="card">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <h4>Dealer/Customer App</h4>
+                        <p style="font-size: 0.8em; color: var(--text-muted); line-height: 1.5;">Digital self-service
+                            profile submission, live document uploads, and a real-time <span class="highlight">8-stage
+                                Application Tracker</span>.</p>
+                    </div>
+
+                    <div class="card">
+                        <i class="fa-solid fa-laptop-file"></i>
+                        <h4>Internal Verification Portal</h4>
+                        <p style="font-size: 0.8em; color: var(--text-muted); line-height: 1.5;">Dedicated web app for
+                            centralized KYC verification, cross-functional approval routing, and automated <span
+                                class="highlight">SLA alerts</span>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Innovative Features Slide (NEW) -->
+            <section>
+                <h2>Out-of-the-box Features</h2>
+                <p style="color: var(--accent-secondary); margin-bottom: 30px;">Pushing boundaries beyond standard
+                    onboarding</p>
+
+                <div class="card-container" style="gap: 20px;">
+                    <div class="card" style="padding: 30px 20px;">
+                        <i class="fa-solid fa-robot" style="color: var(--accent-primary);"></i>
+                        <h4 style="font-size: 1.2em;">AI-Powered Extraction</h4>
+                        <p style="font-size: 0.75em; color: var(--text-muted);">Automated OCR data extraction from
+                            uploaded documents (Aadhaar, PAN, GST) to eliminate manual form filling completely.</p>
+                    </div>
+
+                    <div class="card" style="padding: 30px 20px;">
+                        <i class="fa-brands fa-whatsapp" style="color: var(--accent-secondary);"></i>
+                        <h4 style="font-size: 1.2em;">WhatsApp Integration</h4>
+                        <p style="font-size: 0.75em; color: var(--text-muted);">Real-time application status updates and
+                            the ability to submit missing documents directly via conversational WhatsApp flows.</p>
+                    </div>
+
+                    <div class="card" style="padding: 30px 20px;">
+                        <i class="fa-solid fa-location-dot" style="color: var(--accent-tertiary);"></i>
+                        <h4 style="font-size: 1.2em;">Geo-Tagging Security</h4>
+                        <p style="font-size: 0.75em; color: var(--text-muted);">Live location validation during
+                            submissions, enhancing KYC compliance and ensuring physical business verification.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Features / Deliverables Slide -->
+            <section>
+                <h2>Phase 1 Deliverables</h2>
+                <div class="list-container" style="width: 90%;">
+                    <ul>
+                        <li><span class="highlight">Automated KYC UI:</span> Built robust integration points for live
+                            Aadhaar, PAN, and GST validation.</li>
+                        <li><span class="highlight">Bank Verification:</span> Seamless Penny Drop validation workflows
+                            incorporated into the user journey.</li>
+                        <li><span class="highlight">Workflow Matrix:</span> Executed multi-departmental routing mockups
+                            (Sales ➔ Finance ➔ Legal).</li>
+                        <li
+                            style="background: rgba(255,176,0,0.1); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent-primary);">
+                            <span class="highlight">Architectural Pivot:</span> Replaced Microsoft BC 365 ERP with a
+                            highly scalable <span class="green-text">custom Admin Panel</span> backed by a robust <span
+                                class="blue-text">PostgreSQL database</span>.
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Tech Stack Slide -->
+            <section>
+                <h2>Architecture & Stack</h2>
+                <div class="card" style="display: inline-block; text-align: left; padding: 40px; min-width: 60%;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h4 class="blue-text"><i class="fa-brands fa-react"></i> Frontend Apps</h4>
+                            <p style="font-size: 0.85em; margin-bottom: 5px;"><strong>Dealer App:</strong> React Native
+                                (Expo)</p>
+                            <p style="font-size: 0.85em;"><strong>Internal Portal:</strong> React.js Single Page App</p>
+                        </div>
+                        <div>
+                            <h4 class="green-text"><i class="fa-solid fa-server"></i> Backend Services</h4>
+                            <p style="font-size: 0.85em; margin-bottom: 5px;"><strong>API Gateway:</strong> Express.js
+                                (Vercel)</p>
+                            <p style="font-size: 0.85em;"><strong>Database Structure:</strong> Custom PostgreSQL API</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                        <h4 style="margin-top: 20px; font-size: 1.1em;">OBL Dynamic Design System</h4>
+                        <div style="display: flex; gap: 15px; margin-top: 10px;">
+                            <div
+                                style="width: 40px; height: 40px; background: #FFB000; border-radius: 50%; box-shadow: 0 4px 10px rgba(255,176,0,0.4);">
+                            </div>
+                            <div
+                                style="width: 40px; height: 40px; background: #00E676; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,230,118,0.4);">
+                            </div>
+                            <div
+                                style="width: 40px; height: 40px; background: #00B0FF; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,176,255,0.4);">
+                            </div>
+                            <div
+                                style="width: 40px; height: 40px; background: #161b22; border: 2px solid #30363d; border-radius: 50%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- End Slide -->
+            <section data-background-gradient="radial-gradient(circle at center, #1a2235 0%, #050608 100%)">
+                <i class="fa-solid fa-rocket"
+                    style="font-size: 4em; color: var(--accent-primary); margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,176,0,0.5));"></i>
+                <h1 style="font-size: 4em;">Ready for Launch</h1>
+                <h3 class="green-text" style="margin-top: 20px;">Open for Phase 1 Demo & Review</h3>
+                <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 60px; letter-spacing: 1px;">
+                    <i class="fa-solid fa-arrows-left-right"></i> Use arrow keys to navigate
+                </p>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Reveal.js Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+            transition: 'none', // Removed transition animations
+            backgroundTransition: 'none', // Removed background transition
+            slideNumber: 'c/t',
+        });
+    </script>
+</body>
+
+</html>

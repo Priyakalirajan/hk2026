@@ -1,0 +1,196 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { COLORS, RADIUS } from '../../constants/theme';
+
+export default function Step4_Documents({ route, navigation }) {
+  const { formData } = route.params || { formData: {} };
+  
+  const [documents, setDocuments] = useState({
+    pan: false,
+    gst: false,
+    bank: false,
+    address: false,
+  });
+
+  const handleUpload = (docType) => {
+    // Mocking an image picker / upload process
+    Alert.alert(
+      'Upload Document',
+      `Choose an upload method for your ${docType.toUpperCase()}`,
+      [
+        { text: 'Take Photo', onPress: () => markUploaded(docType) },
+        { text: 'Choose from Gallery', onPress: () => markUploaded(docType) },
+        { text: 'Cancel', style: 'cancel' }
+      ]
+    );
+  };
+
+  const markUploaded = (docType) => {
+    setDocuments(prev => ({ ...prev, [docType]: true }));
+  };
+
+  const handleNext = () => {
+    if (!documents.pan || !documents.gst || !documents.bank) {
+      Alert.alert('Missing Documents', 'Please upload mandatory documents (PAN, GST, Bank Proof).');
+      return;
+    }
+    navigation.navigate('Step5', { formData });
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Image source={require('../../../logo.png')} style={styles.headerLogo} resizeMode="contain" />
+        <Text style={styles.headerTitle}>Step 4: Documents</Text>
+        <Text style={styles.headerSubtitle}>Upload supporting documents for your application</Text>
+      </View>
+      
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>⚠️ Ensure all uploaded images are clear and readable. Limit file size to 5MB.</Text>
+        </View>
+
+        <View style={styles.docRow}>
+          <View style={styles.docInfo}>
+            <Text style={styles.docTitle}>PAN Card Image *</Text>
+            <Text style={styles.docSubtitle}>Required for verified PAN: {formData.panNumber || 'Pending'}</Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.uploadBtn, documents.pan && styles.uploadBtnSuccess]} 
+            onPress={() => handleUpload('pan')}
+          >
+            <Text style={styles.uploadBtnText}>{documents.pan ? '✓ Uploaded' : 'Upload'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.docRow}>
+          <View style={styles.docInfo}>
+            <Text style={styles.docTitle}>GST Certificate *</Text>
+            <Text style={styles.docSubtitle}>Required for verified GSTIN</Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.uploadBtn, documents.gst && styles.uploadBtnSuccess]} 
+            onPress={() => handleUpload('gst')}
+          >
+            <Text style={styles.uploadBtnText}>{documents.gst ? '✓ Uploaded' : 'Upload'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.docRow}>
+          <View style={styles.docInfo}>
+            <Text style={styles.docTitle}>Cancelled Cheque / Bank Statement *</Text>
+            <Text style={styles.docSubtitle}>Must show the registered business name</Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.uploadBtn, documents.bank && styles.uploadBtnSuccess]} 
+            onPress={() => handleUpload('bank')}
+          >
+            <Text style={styles.uploadBtnText}>{documents.bank ? '✓ Uploaded' : 'Upload'}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.docRow}>
+          <View style={styles.docInfo}>
+            <Text style={styles.docTitle}>Address Proof (Optional)</Text>
+            <Text style={styles.docSubtitle}>Electricity Bill or Lease Agreement</Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.uploadBtn, documents.address && styles.uploadBtnSuccess]} 
+            onPress={() => handleUpload('address')}
+          >
+            <Text style={styles.uploadBtnText}>{documents.address ? '✓ Uploaded' : 'Upload'}</Text>
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Text style={styles.backBtnText}>Back</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.nextBtn, (!documents.pan || !documents.gst || !documents.bank) && styles.nextBtnDisabled]} 
+          onPress={handleNext}
+          disabled={!documents.pan || !documents.gst || !documents.bank}
+        >
+          <Text style={styles.nextBtnText}>Next: Declaration</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: COLORS.bg },
+  header: { 
+    padding: 24, 
+    paddingTop: 60, 
+    backgroundColor: COLORS.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border
+  },
+  headerLogo: { width: 100, height: 35, marginBottom: 16 },
+  headerTitle: { color: COLORS.accent, fontSize: 24, fontWeight: 'bold', marginBottom: 4 },
+  headerSubtitle: { color: COLORS.textSecondary, fontSize: 14 },
+  
+  scrollContent: { padding: 24, paddingBottom: 40 },
+  
+  infoBox: {
+    backgroundColor: 'rgba(255, 204, 0, 0.1)', // Subtle supernova
+    padding: 16,
+    borderRadius: RADIUS.md,
+    marginBottom: 24,
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.accent,
+  },
+  infoText: { color: COLORS.textMuted, fontSize: 13, lineHeight: 20 },
+
+  docRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface2,
+    padding: 16,
+    borderRadius: RADIUS.lg,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  docInfo: { flex: 1, paddingRight: 16 },
+  docTitle: { color: COLORS.text, fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
+  docSubtitle: { color: COLORS.textSecondary, fontSize: 13 },
+  
+  uploadBtn: {
+    backgroundColor: COLORS.surface3,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  uploadBtnSuccess: {
+    backgroundColor: 'rgba(40, 136, 64, 0.15)',
+    borderColor: COLORS.green,
+  },
+  uploadBtnText: { color: COLORS.text, fontWeight: '600', fontSize: 14 },
+
+  footer: { 
+    flexDirection: 'row',
+    padding: 24, 
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border 
+  },
+  backBtn: { padding: 16, marginRight: 16, justifyContent: 'center' },
+  backBtnText: { color: COLORS.textSecondary, fontSize: 16 },
+  nextBtn: { 
+    flex: 1,
+    backgroundColor: COLORS.accent, 
+    paddingVertical: 16, 
+    borderRadius: RADIUS.md, 
+    alignItems: 'center' 
+  },
+  nextBtnDisabled: { backgroundColor: COLORS.border },
+  nextBtnText: { color: COLORS.bg, fontSize: 16, fontWeight: 'bold' }
+});
