@@ -3,29 +3,34 @@
 
 <head>
     <meta charset="utf-8">
-    <title>OBL SwiftOnboard - Phase 1 Review</title>
+    <title>OBL SwiftOnboard — Phase 1 Review</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Reveal.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-
+        /* ══════════════════════════════
+       ORIGINAL OBL THEME  (preserved)
+    ══════════════════════════════ */
         :root {
-            /* OBL Custom Premium Theme */
             --bg-color: #0d1117;
-            --surface-color: rgba(22, 27, 34, 0.75);
+            --surface-color: rgba(22, 27, 34, 0.80);
             --border-color: rgba(48, 54, 61, 0.8);
-
             --accent-primary: #FFB000;
             --accent-secondary: #00E676;
             --accent-tertiary: #00B0FF;
             --gradient-text: linear-gradient(135deg, #FFCC00 0%, #FF8F00 100%);
-
             --text-main: #f0f6fc;
             --text-muted: #8b949e;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
         }
 
         body {
@@ -35,38 +40,48 @@
             overflow: hidden;
         }
 
-        /* Glassmorphism background elements */
+        /* Ambient glows */
         .bg-glow-1 {
-            position: absolute;
+            position: fixed;
             top: -10%;
             left: -10%;
             width: 40vw;
             height: 40vw;
-            background: radial-gradient(circle, rgba(255, 176, 0, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(255, 176, 0, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
         }
 
         .bg-glow-2 {
-            position: absolute;
+            position: fixed;
             bottom: -10%;
             right: -10%;
             width: 50vw;
             height: 50vw;
-            background: radial-gradient(circle, rgba(0, 230, 118, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+            background: radial-gradient(circle, rgba(0, 230, 118, 0.05) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
         }
 
+        /* dot grid */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 36px 36px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .reveal {
-            background: transparent;
             font-family: 'Outfit', sans-serif;
+            background: transparent;
             z-index: 1;
         }
 
-        /* Typography */
+        /* ── Typography ── */
         .reveal h1,
         .reveal h2,
         .reveal h3,
@@ -77,22 +92,22 @@
             text-transform: none;
             font-weight: 700;
             letter-spacing: -0.02em;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .reveal h1 {
-            font-size: 3.5em;
+            font-size: 3.4em;
+            font-weight: 800;
             background: var(--gradient-text);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 4px 12px rgba(255, 176, 0, 0.2));
-            font-weight: 800;
+            filter: drop-shadow(0 4px 12px rgba(255, 176, 0, 0.2));
         }
 
         .reveal h2 {
             color: var(--text-main);
-            font-size: 2.5em;
+            font-size: 2.2em;
             position: relative;
             display: inline-block;
         }
@@ -111,50 +126,50 @@
 
         .reveal h3 {
             color: var(--accent-primary);
-            font-size: 1.8em;
+            font-size: 1.6em;
             font-weight: 500;
         }
 
         .reveal p,
         .reveal li {
             color: var(--text-main);
-            font-size: 1.15em;
+            font-size: 1em;
             line-height: 1.6;
             font-weight: 300;
         }
 
-        .highlight {
+        .hi {
             color: var(--accent-primary);
-            font-weight: 500;
         }
 
-        .green-text {
+        .gr {
             color: var(--accent-secondary);
         }
 
-        .blue-text {
+        .bl {
             color: var(--accent-tertiary);
         }
 
-        /* Premium Glass Cards */
-        .card-container {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 40px;
+        .mu {
+            color: var(--text-muted);
         }
 
+        /* ── Glass Card ── */
         .card {
-            background-color: var(--surface-color);
+            background: var(--surface-color);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 40px 30px;
-            flex: 1;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px 24px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
             position: relative;
             overflow: hidden;
+        }
+
+        .card h4,
+        .card strong {
+            color: #FFFFFF !important;
         }
 
         .card::before {
@@ -163,261 +178,1339 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
+            height: 3px;
             background: var(--gradient-text);
         }
 
-        .card i {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            color: var(--accent-primary);
+        .card.green-top::before {
+            background: linear-gradient(90deg, var(--accent-secondary), #00897B);
         }
 
-        .card h4 {
-            margin-top: 0;
-            color: var(--text-main);
-            font-size: 1.4em;
-            margin-bottom: 15px;
+        .card.blue-top::before {
+            background: linear-gradient(90deg, var(--accent-tertiary), #0277BD);
         }
 
-        .logo {
-            max-width: 240px;
-            margin-bottom: 30px !important;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+        .card.red-top::before {
+            background: linear-gradient(90deg, #FF5252, #B71C1C);
         }
 
-        /* Lists */
-        .list-container {
-            background-color: var(--surface-color);
-            backdrop-filter: blur(12px);
-            padding: 40px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-            display: inline-block;
-            text-align: left;
-            margin-top: 30px;
+        .card.dim-top::before {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent);
         }
 
+        /* ── Lists ── */
         .reveal ul {
-            display: block;
+            list-style: none;
             margin: 0;
             padding: 0;
-            list-style: none;
+            display: block;
         }
 
         .reveal ul li {
-            margin-bottom: 20px;
-            padding-left: 35px;
+            margin-bottom: 14px;
+            padding-left: 30px;
             position: relative;
+            font-size: 0.92em;
         }
 
         .reveal ul li::before {
             content: '\f058';
-            /* Check circle */
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             position: absolute;
             left: 0;
             top: 2px;
             color: var(--accent-primary);
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
-        .reveal ul.bad-list li::before {
-            content: '\f057';
-            /* Times circle */
-            color: #ff5252;
+        .bad-list li::before {
+            content: '\f057' !important;
+            color: #FF5252 !important;
         }
 
-        /* Progress auto color */
-        .reveal .controls,
-        .reveal .progress {
+        .blue-list li::before {
+            color: var(--accent-tertiary) !important;
+        }
+
+        .green-list li::before {
+            color: var(--accent-secondary) !important;
+        }
+
+        .arr-list li::before {
+            content: '\f061' !important;
+            color: var(--accent-primary) !important;
+        }
+
+        /* ── Pill label ── */
+        .pill {
+            display: inline-block;
+            font-size: 0.5em;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent-primary);
+            border: 1px solid rgba(255, 176, 0, 0.3);
+            border-radius: 100px;
+            padding: 4px 16px;
+            margin-bottom: 14px;
+            background: rgba(255, 176, 0, 0.06);
+        }
+
+        /* ── Chip ── */
+        .chip {
+            display: inline-block;
+            font-size: 0.6em;
+            padding: 3px 12px;
+            border-radius: 100px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .chip.g {
+            background: rgba(255, 176, 0, 0.12);
+            color: var(--accent-primary);
+            border: 1px solid rgba(255, 176, 0, 0.25);
+        }
+
+        .chip.gr {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent-secondary);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .chip.bl {
+            background: rgba(0, 176, 255, 0.1);
+            color: var(--accent-tertiary);
+            border: 1px solid rgba(0, 176, 255, 0.2);
+        }
+
+        .chip.rd {
+            background: rgba(255, 82, 82, 0.1);
+            color: #FF5252;
+            border: 1px solid rgba(255, 82, 82, 0.2);
+        }
+
+        /* ── Icon circle ── */
+        .ic {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .ic.g {
+            background: rgba(255, 176, 0, 0.1);
             color: var(--accent-primary);
         }
 
+        .ic.gr {
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--accent-secondary);
+        }
+
+        .ic.bl {
+            background: rgba(0, 176, 255, 0.1);
+            color: var(--accent-tertiary);
+        }
+
+        .ic.rd {
+            background: rgba(255, 82, 82, 0.1);
+            color: #FF5252;
+        }
+
+        /* ── Layout ── */
+        .row {
+            display: flex;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .f1 {
+            flex: 1;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        hr.div {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 14px 0;
+        }
+
+        /* step badge */
+        .snum {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 176, 0, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: var(--accent-primary);
+            font-size: 0.85em;
+            flex-shrink: 0;
+        }
+
+        /* ── Workflow timeline ── */
+        .wf-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 8px 0 8px 18px;
+            border-left: 2px solid rgba(255, 176, 0, 0.2);
+            margin-left: 12px;
+            position: relative;
+        }
+
+        .wf-step::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 12px;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            box-shadow: 0 0 8px rgba(255, 176, 0, 0.5);
+        }
+
+        .wf-step:last-child {
+            border-left-color: transparent;
+        }
+
+        .wf-dept {
+            font-size: 0.65em;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .wf-action {
+            font-size: 0.8em;
+            color: var(--text-main);
+            font-weight: 300;
+            margin-top: 2px;
+        }
+
+        .wf-tat {
+            font-size: 0.62em;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ── Stat block ── */
+        .stat {
+            text-align: center;
+            padding: 18px 14px;
+        }
+
+        .stat-v {
+            font-size: 2.1em;
+            font-weight: 800;
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .stat-v.gr {
+            background: linear-gradient(135deg, var(--accent-secondary), #00897B);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-v.bl {
+            background: linear-gradient(135deg, var(--accent-tertiary), #0277BD);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-l {
+            font-size: 0.6em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* ── Compare table ── */
+        .ctable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.76em;
+        }
+
+        .ctable th {
+            padding: 10px 14px;
+            font-weight: 700;
+            text-align: left;
+            font-size: 0.88em;
+        }
+
+        .ctable th:first-child {
+            color: var(--text-muted);
+        }
+
+        .ctable th:nth-child(2) {
+            color: #FF5252;
+            background: rgba(255, 82, 82, 0.07);
+        }
+
+        .ctable th:nth-child(3) {
+            color: var(--accent-secondary);
+            background: rgba(0, 230, 118, 0.07);
+        }
+
+        .ctable td {
+            padding: 8px 14px;
+            color: var(--text-main);
+            font-weight: 300;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ctable td:nth-child(2) {
+            color: rgba(255, 82, 82, 0.85);
+        }
+
+        .ctable td:nth-child(3) {
+            color: var(--accent-secondary);
+            font-weight: 500;
+        }
+
+        /* ── Architecture flow boxes ── */
+        .arch-box {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.72em;
+            text-align: center;
+            background: var(--surface-color);
+            backdrop-filter: blur(8px);
+            position: relative;
+        }
+
+        .arch-box .ab-label {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1em;
+            margin-bottom: 3px;
+        }
+
+        .arch-box .ab-sub {
+            color: var(--text-muted);
+            font-size: 0.88em;
+            line-height: 1.4;
+        }
+
+        .arch-box.gold-b {
+            border-color: rgba(255, 176, 0, 0.4);
+        }
+
+        .arch-box.green-b {
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .arch-box.blue-b {
+            border-color: rgba(0, 176, 255, 0.3);
+        }
+
+        .arrow-right {
+            display: flex;
+            align-items: center;
+            color: var(--accent-primary);
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+
+        .arrow-down {
+            text-align: center;
+            color: var(--accent-primary);
+            font-size: 0.9em;
+            line-height: 1;
+            padding: 3px 0;
+        }
+
+        /* possible / not possible */
+        .poss-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .poss-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 14px;
+        }
+
+        .poss-item.yes {
+            background: rgba(0, 230, 118, 0.06);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .poss-item.no {
+            background: rgba(255, 82, 82, 0.06);
+            border: 1px solid rgba(255, 82, 82, 0.2);
+        }
+
+        .poss-item i {
+            font-size: 1.1em;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .poss-item .pt {
+            font-size: 0.82em;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .poss-item .ps {
+            font-size: 0.72em;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* logo area */
+        .logo-area {
+            width: 160px;
+            height: 52px;
+            border: 1px dashed rgba(255, 176, 0, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 176, 0, 0.4);
+            font-size: 0.65em;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin: 0 auto 24px;
+        }
+
+        /* progress */
         .reveal .progress {
-            height: 4px;
+            height: 3px;
         }
 
         .reveal .progress span {
-            background-color: var(--accent-primary);
+            background: var(--accent-primary);
+        }
+
+        .reveal .controls {
+            color: var(--accent-primary);
+        }
+
+        .reveal .slide-number {
+            font-size: 0.65em;
+            color: var(--text-muted);
+        }
+
+        .reveal .slides section {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
     </style>
 </head>
 
 <body>
+
     <div class="bg-glow-1"></div>
     <div class="bg-glow-2"></div>
+    <div class="bg-grid"></div>
 
     <div class="reveal">
         <div class="slides">
 
-            <!-- Title Slide -->
+
+            <!-- ══════════════════════════════════════
+  SLIDE 1 — TITLE
+══════════════════════════════════════ -->
             <section>
-                <img src="logo.png" alt="Orientbell Logo" class="logo" onerror="this.style.display='none'">
-                <h1>SwiftOnboard</h1>
-                <h3>Phase 1 Project Review</h3>
-                <p style="color: var(--text-muted); font-size: 1.2em; font-weight: 400;">Next-Gen Dealer & Customer
-                    Digital Onboarding Ecosystem</p>
-                <div
-                    style="margin-top: 50px; border-top: 1px solid var(--border-color); padding-top: 20px; width: 60%; margin-left: auto; margin-right: auto;">
-                    <p
-                        style="font-size: 0.8em; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase;">
-                        Hackathon 2025</p>
+                <div class="center" style="max-width:780px; width:100%;">
+                    <!-- Logo slot -->
+                    <div class="logo-area"><img src="./assets/logo.png"
+                            style="height:100%; width:auto; object-fit:contain;"></div>
+
+                    <div class="pill">Orientbell Limited &nbsp;·&nbsp; Hackathon 2025</div>
+
+                    <h1>OBL SwiftOnboard</h1>
+                    <h3 style="margin-top:6px;">Phase 1 Project Review</h3>
+                    <p class="mu" style="font-size:1.05em; font-weight:400; margin-top:8px;">Next-Gen Dealer &amp;
+                        Customer Digital Onboarding Ecosystem</p>
+
+                    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:32px;">
+                        <span class="chip g"><i class="fa-solid fa-mobile-screen-button"></i>&nbsp; Mobile-First</span>
+                        <span class="chip gr"><i class="fa-solid fa-shield-halved"></i>&nbsp; KYC Automated</span>
+                        <span class="chip bl"><i class="fa-solid fa-diagram-project"></i>&nbsp; 5-Dept Workflow</span>
+                        <span class="chip g"><i class="fa-solid fa-plug-circle-bolt"></i>&nbsp; BC 365 ERP</span>
+                    </div>
+
+                    <div style="margin-top:40px; border-top:1px solid var(--border-color); padding-top:16px;">
+                        <p class="mu" style="font-size:0.7em; letter-spacing:2px; text-transform:uppercase;">Phase 1
+                            Review &nbsp;·&nbsp; March 2025</p>
+                    </div>
                 </div>
             </section>
 
-            <!-- Problem Slide -->
+
+            <!-- ══════════════════════════════════════
+  SLIDE 2 — THE CHALLENGE
+══════════════════════════════════════ -->
             <section>
-                <h2>The Challenge</h2>
-                <div class="list-container" style="width: 80%;">
-                    <ul class="bad-list">
-                        <li><strong>Paper-Heavy Processes:</strong> Fragmented and inefficient manual submission flows.
-                        </li>
-                        <li><strong>High Error Margins:</strong> Manual data entry leading to costly mistakes and
-                            document bounce-backs.</li>
-                        <li><strong>Zero Visibility:</strong> Complete lack of transparency for partners during the
-                            onboarding journey.</li>
-                        <li><strong>Slow Turnaround:</strong> Severely delayed "time-to-market" for establishing new
-                            business relationships.</li>
-                    </ul>
+                <div style="max-width:860px; width:100%;">
+                    <div class="center">
+                        <div class="pill">The Problem</div>
+                        <h2 style="margin-bottom:28px;">What's Broken Today</h2>
+                    </div>
+
+                    <div class="row" style="margin-top:20px;">
+                        <div class="card red-top f1">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                                <div class="ic rd"><i class="fa-solid fa-file-circle-xmark"></i></div>
+                                <strong style="color: white;">Paper-Heavy Processes</strong>
+                            </div>
+                            <p class="mu" style="font-size:0.82em;">6+ physical forms. 14 manual data-entry touchpoints
+                                across departments. No standardisation.</p>
+                        </div>
+                        <div class="card red-top f1">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                                <div class="ic rd"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <strong style="color: white;">~12% KYC Error Rate</strong>
+                            </div>
+                            <p class="mu" style="font-size:0.82em;">Manual entry leads to costly document rejections,
+                                re-submissions, and wasted department time.</p>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top:14px;">
+                        <div class="card red-top f1">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                                <div class="ic rd"><i class="fa-solid fa-eye-slash"></i></div>
+                                <strong style="color: white;">Zero Visibility</strong>
+                            </div>
+                            <p class="mu" style="font-size:0.82em;">Partners track status via phone only. No tracker. No
+                                SLA enforcement. No escalation.</p>
+                        </div>
+                        <div class="card red-top f1">
+                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                                <div class="ic rd"><i class="fa-solid fa-hourglass-half"></i></div>
+                                <strong style="color: white;">7–14 Day TAT</strong>
+                            </div>
+                            <p class="mu" style="font-size:0.82em;">35% dealer drop-off. Slow time-to-market. No
+                                automated handoff between departments.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Solution Slide -->
-            <section>
-                <h2>Our Ecosystem Solution</h2>
-                <p style="margin-bottom: 40px; color: var(--text-muted);">A seamless, automated, and secure digital
-                    platform.</p>
 
-                <div class="card-container">
+            <!-- ══════════════════════════════════════
+  SLIDE 3 — DATA INPUTS (NEW)
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:860px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Data Sources</div>
+                        <h2 style="margin-bottom:10px;">What We're Digitising</h2>
+                        <p class="mu" style="font-size:0.88em; margin-bottom:28px;">These physical/manual files drive
+                            the current onboarding process — we replace them entirely</p>
+                    </div>
+
+                    <div class="row" style="margin-top:4px;">
+                        <!-- PDF form -->
+                        <div class="card f1" style="display:flex; flex-direction:column; gap:14px;">
+                            <div style="display:flex; align-items:center; gap:14px;">
+                                <div
+                                    style="width:52px; height:60px; background:rgba(255,82,82,0.12); border:1px solid rgba(255,82,82,0.25); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.5em; color:#FF5252; flex-shrink:0;">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight:700; font-size:0.92em; color:var(--text-main);">DEALERSHIP
+                                        AGREEMENT FORM</div>
+                                    <div class="mu" style="font-size:0.72em; margin-top:2px;">Physical PDF · Manual sign
+                                        &amp; scan · Multi-page</div>
+                                </div>
+                            </div>
+                            <hr class="div">
+                            <p class="mu" style="font-size:0.78em; line-height:1.6;">Currently filled by hand, scanned,
+                                and emailed to the Sales team. Contains dealer business info, trade terms, and
+                                declaration. <strong class="hi">SwiftOnboard replaces this with the guided 5-step
+                                    digital form.</strong></p>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <span class="chip rd">Physical Form</span>
+                                <span class="chip g">→ Digital Form</span>
+                            </div>
+                        </div>
+
+                        <!-- Excel file -->
+                        <div class="card f1" style="display:flex; flex-direction:column; gap:14px;">
+                            <div style="display:flex; align-items:center; gap:14px;">
+                                <div
+                                    style="width:52px; height:60px; background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.25); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.5em; color:var(--accent-secondary); flex-shrink:0;">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight:700; font-size:0.92em; color:var(--text-main);">
+                                        PNRao_SalesRetail_Customer_Master.xlsx</div>
+                                    <div class="mu" style="font-size:0.72em; margin-top:2px;">Excel Master Sheet ·
+                                        Manual ERP entry · Historical data</div>
+                                </div>
+                            </div>
+                            <hr class="div">
+                            <p class="mu" style="font-size:0.78em; line-height:1.6;">Current customer/dealer master
+                                maintained as a flat Excel sheet. Manually updated after approval and keyed into BC 365.
+                                Error-prone and not real-time. <strong class="gr">SwiftOnboard auto-pushes verified data
+                                    directly to BC 365.</strong></p>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <span class="chip rd">Manual Excel</span>
+                                <span class="chip gr">→ Auto BC 365 Push</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card dim-top"
+                        style="margin-top:14px; padding:14px 20px; display:flex; align-items:center; gap:12px;">
+                        <i class="fa-solid fa-lightbulb hi" style="font-size:1.2em;"></i>
+                        <p style="font-size:0.8em; color:var(--text-muted); margin:0;">Both files are used as <strong
+                                class="hi">reference data</strong> for simulation and test cases in the hackathon demo —
+                            dealer master rows map directly to our onboarding form fields.</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 4 — SOLUTION OVERVIEW
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:860px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Our Solution</div>
+                        <h2 style="margin-bottom:10px;">One Ecosystem. End-to-End.</h2>
+                        <p class="mu" style="font-size:0.88em; margin-bottom:26px;">A seamless, automated, and secure
+                            digital platform</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="card f1 center">
+                            <i class="fa-solid fa-mobile-screen-button hi"
+                                style="font-size:2em; margin-bottom:10px; display:block;"></i>
+                            <h4 class="hi">Dealer / Customer App</h4>
+                            <p class="mu" style="font-size:0.78em;">React Native (Expo) · 5-step guided form · OCR
+                                auto-fill · Real-time 8-stage tracker</p>
+                        </div>
+                        <div class="card blue-top f1 center">
+                            <i class="fa-solid fa-laptop-file bl"
+                                style="font-size:2em; margin-bottom:10px; display:block;"></i>
+                            <h4 style="color:var(--accent-tertiary);">Internal Admin Portal</h4>
+                            <p class="mu" style="font-size:0.78em;">Centralised KYC review · OCR side-by-side · 5-dept
+                                routing · TAT monitor · Auto-escalation</p>
+                        </div>
+                        <div class="card green-top f1 center">
+                            <i class="fa-solid fa-plug-circle-bolt gr"
+                                style="font-size:2em; margin-bottom:10px; display:block;"></i>
+                            <h4 class="gr">BC 365 ERP Bridge</h4>
+                            <p class="mu" style="font-size:0.78em;">One-click push to Microsoft BC 365 · Auto dealer
+                                code · Welcome kit dispatch</p>
+                        </div>
+                    </div>
+
+                    <div class="card dim-top"
+                        style="margin-top:14px; display:flex; gap:24px; padding:12px 22px; justify-content:center; flex-wrap:wrap; align-items:center;">
+                        <span style="font-size:0.75em; color:var(--text-muted);"><i
+                                class="fa-solid fa-check hi"></i>&nbsp; <strong style="color:var(--text-main);">Target
+                                TAT:</strong> &lt; 48 hours</span>
+                        <span style="color:var(--border-color);">|</span>
+                        <span style="font-size:0.75em; color:var(--text-muted);"><i
+                                class="fa-solid fa-check hi"></i>&nbsp; <strong
+                                style="color:var(--text-main);">Zero</strong> paper forms</span>
+                        <span style="color:var(--border-color);">|</span>
+                        <span style="font-size:0.75em; color:var(--text-muted);"><i
+                                class="fa-solid fa-check hi"></i>&nbsp; <strong
+                                style="color:var(--text-main);">99.5%</strong> uptime SLA</span>
+                        <span style="color:var(--border-color);">|</span>
+                        <span style="font-size:0.75em; color:var(--text-muted);"><i
+                                class="fa-solid fa-check hi"></i>&nbsp; <strong
+                                style="color:var(--text-main);">500</strong> concurrent apps</span>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 5 — SYSTEM ARCHITECTURE (NEW)
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:900px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Architecture</div>
+                        <h2 style="margin-bottom:24px;">System Architecture &amp; Layers</h2>
+                    </div>
+
+                    <!-- 3-column layer diagram -->
+                    <div
+                        style="display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:8px; align-items:center;">
+
+                        <!-- Col 1: Client Layer -->
+                        <div class="col" style="gap:10px;">
+                            <div
+                                style="font-size:0.58em; font-weight:700; color:var(--accent-primary); text-transform:uppercase; letter-spacing:2px; text-align:center; margin-bottom:4px;">
+                                Client Layer</div>
+                            <div class="arch-box gold-b">
+                                <div class="ab-label"><i class="fa-brands fa-react hi"></i>&nbsp; Dealer App</div>
+                                <div class="ab-sub">React Native · Expo SDK 51<br>iOS 14+ / Android 10+</div>
+                            </div>
+                            <div class="arch-box gold-b">
+                                <div class="ab-label"><i class="fa-solid fa-laptop bl"></i>&nbsp; Admin Portal</div>
+                                <div class="ab-sub">React.js SPA<br>Mobile + Desktop</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="arrow-right"><i class="fa-solid fa-arrow-right"></i></div>
+
+                        <!-- Col 2: Backend / API Layer -->
+                        <div class="col" style="gap:10px;">
+                            <div
+                                style="font-size:0.58em; font-weight:700; color:var(--accent-primary); text-transform:uppercase; letter-spacing:2px; text-align:center; margin-bottom:4px;">
+                                API &amp; Business Logic</div>
+                            <div class="arch-box gold-b">
+                                <div class="ab-label"><i class="fa-solid fa-server hi"></i>&nbsp; Express.js API Gateway
+                                </div>
+                                <div class="ab-sub">JWT Auth · Rate limiting<br>Node.js 20 LTS</div>
+                            </div>
+                            <div class="arch-box gold-b">
+                                <div class="ab-label"><i class="fa-solid fa-gears hi"></i>&nbsp; Services</div>
+                                <div class="ab-sub">KYC Service · Workflow Engine<br>Notification · ERP Bridge</div>
+                            </div>
+                            <div class="arch-box gold-b">
+                                <div class="ab-label"><i class="fa-solid fa-database hi"></i>&nbsp; Data Layer</div>
+                                <div class="ab-sub">PostgreSQL (AES-256)<br>Redis · AWS S3</div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="arrow-right"><i class="fa-solid fa-arrow-right"></i></div>
+
+                        <!-- Col 3: External Services -->
+                        <div class="col" style="gap:8px;">
+                            <div
+                                style="font-size:0.58em; font-weight:700; color:var(--accent-primary); text-transform:uppercase; letter-spacing:2px; text-align:center; margin-bottom:4px;">
+                                External Services</div>
+                            <div class="arch-box green-b">
+                                <div class="ab-label"><i class="fa-solid fa-id-card gr"></i>&nbsp; KYC APIs</div>
+                                <div class="ab-sub">PAN · GSTIN · Aadhaar OTP<br>Penny Drop · Passport</div>
+                            </div>
+                            <div class="arch-box blue-b">
+                                <div class="ab-label"><i class="fa-solid fa-plug-circle-bolt bl"></i>&nbsp; Microsoft BC
+                                    365</div>
+                                <div class="ab-sub">OAuth 2.0 / Azure AD<br>REST API v2.0</div>
+                            </div>
+                            <div class="arch-box green-b">
+                                <div class="ab-label"><i class="fa-solid fa-bell gr"></i>&nbsp; Notifications</div>
+                                <div class="ab-sub">MSG91 SMS · SendGrid<br>Expo Push</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card dim-top"
+                        style="margin-top:14px; padding:11px 20px; display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-shield-halved gr" style="font-size:1.1em;"></i>
+                        <p class="mu" style="font-size:0.75em; margin:0;">TLS 1.3 on all channels · AES-256 PII at rest
+                            · Zero API keys in app bundle · Horizontally scalable · 99.5% uptime</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 6 — DATA FLOW (NEW)
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:900px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Data Flow</div>
+                        <h2 style="margin-bottom:24px;">Application Journey — Step by Step</h2>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:start;">
+
+                        <!-- Step 1 -->
+                        <div style="text-align:center;">
+                            <div
+                                style="width:44px; height:44px; border-radius:50%; background:rgba(255,176,0,0.15); border:2px solid var(--accent-primary); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-weight:800; color:var(--accent-primary);">
+                                1</div>
+                            <div class="arch-box gold-b" style="padding:10px;">
+                                <div class="ab-label"><i class="fa-solid fa-mobile-screen-button hi"></i> Submit</div>
+                                <div class="ab-sub" style="margin-top:4px;">Dealer fills 5-step form. Auto-saved every
+                                    60s. KYC APIs triggered server-side.</div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-right" style="justify-content:center; padding-top:30px;"><i
+                                class="fa-solid fa-arrow-right"></i></div>
+
+                        <!-- Step 2 -->
+                        <div style="text-align:center;">
+                            <div
+                                style="width:44px; height:44px; border-radius:50%; background:rgba(255,176,0,0.15); border:2px solid var(--accent-primary); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-weight:800; color:var(--accent-primary);">
+                                2</div>
+                            <div class="arch-box gold-b" style="padding:10px;">
+                                <div class="ab-label"><i class="fa-solid fa-file-waveform hi"></i> KYC Check</div>
+                                <div class="ab-sub" style="margin-top:4px;">PAN, GST, Aadhaar &amp; Penny Drop verified
+                                    instantly. Only masked results returned to app.</div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-right" style="justify-content:center; padding-top:30px;"><i
+                                class="fa-solid fa-arrow-right"></i></div>
+
+                        <!-- Step 3 -->
+                        <div style="text-align:center;">
+                            <div
+                                style="width:44px; height:44px; border-radius:50%; background:rgba(255,176,0,0.15); border:2px solid var(--accent-primary); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; font-weight:800; color:var(--accent-primary);">
+                                3</div>
+                            <div class="arch-box gold-b" style="padding:10px;">
+                                <div class="ab-label"><i class="fa-solid fa-diagram-project hi"></i> Approvals</div>
+                                <div class="ab-sub" style="margin-top:4px;">Auto-routed: Sales → Finance → Legal →
+                                    Credit → IT. TAT monitor every 15 min.</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Second row -->
+                    <div
+                        style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:start; margin-top:14px;">
+
+                        <div style="text-align:center;">
+                            <div class="arrow-down" style="margin-bottom:8px;"><i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                            <div class="arch-box blue-b" style="padding:10px; text-align:center;">
+                                <div class="ab-label bl"><i class="fa-solid fa-plug-circle-bolt bl"></i> ERP Push</div>
+                                <div class="ab-sub" style="margin-top:4px;">IT team triggers one-click push to Microsoft
+                                    BC 365. Dealer code auto-generated.</div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-right"
+                            style="justify-content:center; padding-top:30px; flex-direction:row-reverse;"><i
+                                class="fa-solid fa-arrow-left"></i></div>
+
+                        <div style="text-align:center;">
+                            <div class="arrow-down" style="margin-bottom:8px;"><i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                            <div class="arch-box green-b" style="padding:10px; text-align:center;">
+                                <div class="ab-label gr"><i class="fa-solid fa-envelope-open-text gr"></i> Welcome Kit
+                                </div>
+                                <div class="ab-sub" style="margin-top:4px;">Auto-generated PDF. Dealer code + credit
+                                    limit + terms sent via Email &amp; SMS.</div>
+                            </div>
+                        </div>
+
+                        <div class="arrow-right"
+                            style="justify-content:center; padding-top:30px; flex-direction:row-reverse;"><i
+                                class="fa-solid fa-arrow-left"></i></div>
+
+                        <div style="text-align:center;">
+                            <div class="arrow-down" style="margin-bottom:8px;"><i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                            <div class="arch-box green-b" style="padding:10px; text-align:center;">
+                                <div class="ab-label gr"><i class="fa-solid fa-circle-check gr"></i> Activated</div>
+                                <div class="ab-sub" style="margin-top:4px;">Dealer status = COMPLETED. Real-time tracker
+                                    updated. Audit trail locked.</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 7 — KYC ENGINE
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:900px; width:100%;">
+                    <div class="center">
+                        <div class="pill">KYC Engine</div>
+                        <h2 style="margin-bottom:10px;">Real-Time API Verification</h2>
+                        <p class="mu" style="font-size:0.82em; margin-bottom:22px;">All API calls server-side only —
+                            zero keys in app bundle · AES-256 at rest · TLS 1.3 in transit</p>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:13px;">
+                        <div class="card">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <i class="fa-solid fa-id-card hi"></i>
+                                <h4 style="font-size:0.9em;margin:0;color:white;">PAN</h4><span class="chip g"
+                                    style="margin-left:auto;">~800ms</span>
+                            </div>
+                            <p class="mu" style="font-size:0.75em;">Name · Entity type · Active status. Mismatch →
+                                application blocked at Step 2.</p>
+                        </div>
+                        <div class="card">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <i class="fa-solid fa-building hi"></i>
+                                <h4 style="font-size:0.9em;margin:0;color:white;">GSTIN</h4><span class="chip g"
+                                    style="margin-left:auto;">~1.2s</span>
+                            </div>
+                            <p class="mu" style="font-size:0.75em;">Legal name · Filing status · Turnover slab · State
+                                code. Cached 24h.</p>
+                        </div>
+                        <div class="card green-top">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <i class="fa-solid fa-fingerprint gr"></i>
+                                <h4 style="font-size:0.9em;margin:0;color:white;">Aadhaar OTP</h4><span class="chip gr"
+                                    style="margin-left:auto;">~3s</span>
+                            </div>
+                            <p class="mu" style="font-size:0.75em;">UIDAI-compliant OTP. Never stored — masked XXXX XXXX
+                                XXXX only. RBI &amp; DPDP compliant.</p>
+                        </div>
+                        <div class="card blue-top">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <i class="fa-solid fa-piggy-bank bl"></i>
+                                <h4 style="font-size:0.9em;margin:0;color:white;">Penny Drop</h4><span class="chip bl"
+                                    style="margin-left:auto;">~2s</span>
+                            </div>
+                            <p class="mu" style="font-size:0.75em;">Re. 1 deposit to confirm account holder vs. entity
+                                name. Cashfree / Razorpay.</p>
+                        </div>
+                        <div class="card blue-top">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <i class="fa-solid fa-landmark bl"></i>
+                                <h4 style="font-size:0.9em;margin:0;color:white;">IFSC Lookup</h4><span class="chip bl"
+                                    style="margin-left:auto;">~500ms</span>
+                            </div>
+                            <p class="mu" style="font-size:0.75em;">Auto-fills Bank name, Branch, City &amp; State from
+                                IFSC code.</p>
+                        </div>
+                        <div class="card">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <i class="fa-solid fa-passport hi"></i>
+                                <h4 style="font-size:0.9em;margin:0;color:white;">Passport</h4><span class="chip g"
+                                    style="margin-left:auto;">~1.5s</span>
+                            </div>
+                            <p class="mu" style="font-size:0.75em;">Name · Expiry · Nationality. Optional for corporate
+                                director verification.</p>
+                        </div>
+                    </div>
+
+                    <div class="card dim-top"
+                        style="margin-top:12px; padding:11px 20px; display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-shield-halved gr" style="font-size:1.1em;"></i>
+                        <p class="mu" style="font-size:0.75em; margin:0;">30s timeout · 3 retries per session · Circuit
+                            breaker · 100 calls/min rate limit · KYC log retained 7 years</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 8 — APPROVAL WORKFLOW
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:900px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Approval Workflow</div>
+                        <h2 style="margin-bottom:26px;">5-Department Routing Matrix</h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="card f1">
+                            <div style="display:flex; flex-direction:column; gap:0;">
+                                <div class="wf-step">
+                                    <div>
+                                        <div class="wf-dept"><i class="fa-solid fa-bolt"></i>&nbsp; Auto KYC</div>
+                                        <div class="wf-action">PAN, GST, Aadhaar, Penny Drop on submission</div>
+                                        <div class="wf-tat">Instant · Pass / Fail / Partial</div>
+                                    </div>
+                                </div>
+                                <div class="wf-step">
+                                    <div>
+                                        <div class="wf-dept"><i class="fa-solid fa-handshake"></i>&nbsp; L1 — Sales
+                                        </div>
+                                        <div class="wf-action">Business legitimacy &amp; regional sales potential</div>
+                                        <div class="wf-tat">TAT: 4 hours</div>
+                                    </div>
+                                </div>
+                                <div class="wf-step">
+                                    <div>
+                                        <div class="wf-dept"><i class="fa-solid fa-magnifying-glass-chart"></i>&nbsp; L2
+                                            — Finance &amp; KYC</div>
+                                        <div class="wf-action">OCR vs document review · KYC result validation</div>
+                                        <div class="wf-tat">TAT: 8 hours</div>
+                                    </div>
+                                </div>
+                                <div class="wf-step">
+                                    <div>
+                                        <div class="wf-dept"><i class="fa-solid fa-scale-balanced"></i>&nbsp; L3 — Legal
+                                        </div>
+                                        <div class="wf-action">Entity structure &amp; regulatory compliance</div>
+                                        <div class="wf-tat">TAT: 4 hours</div>
+                                    </div>
+                                </div>
+                                <div class="wf-step">
+                                    <div>
+                                        <div class="wf-dept"><i class="fa-solid fa-credit-card"></i>&nbsp; L4 — Credit
+                                            Control</div>
+                                        <div class="wf-action">Credit limit assignment &amp; risk scoring</div>
+                                        <div class="wf-tat">TAT: 4 hours</div>
+                                    </div>
+                                </div>
+                                <div class="wf-step">
+                                    <div>
+                                        <div class="wf-dept"><i class="fa-solid fa-server"></i>&nbsp; L5 — IT / ERP
+                                        </div>
+                                        <div class="wf-action">One-click BC 365 push · Dealer code assigned</div>
+                                        <div class="wf-tat">TAT: 2 hours</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col" style="flex:0 0 260px;">
+                            <div class="card" style="padding:20px;">
+                                <h4 style="font-size:0.9em; margin-bottom:10px;color:white;"><i
+                                        class="fa-solid fa-bell hi"></i>&nbsp; Auto-Escalation</h4>
+                                <ul class="arr-list" style="font-size:0.78em;">
+                                    <li><strong>80% TAT:</strong> Reminder to assignee</li>
+                                    <li><strong>100% TAT:</strong> Dept head — SMS + Email + Push</li>
+                                    <li><strong>150% TAT:</strong> + Ops Manager CC'd</li>
+                                    <li><strong>200% TAT:</strong> CRITICAL → Super Admin</li>
+                                </ul>
+                            </div>
+                            <div class="card" style="padding:20px;">
+                                <h4 style="font-size:0.9em; margin-bottom:10px;color:white;"><i
+                                        class="fa-solid fa-rotate-left bl"></i>&nbsp; Rejection &amp; Re-Submit</h4>
+                                <ul class="blue-list" style="font-size:0.78em;">
+                                    <li>Mandatory reason on rejection</li>
+                                    <li>Resumes from rejected stage</li>
+                                    <li>7-day window · Max 3 attempts</li>
+                                    <li>Full audit trail on every action</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 9 — ERP BC 365
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:900px; width:100%;">
+                    <div class="center">
+                        <div class="pill">ERP Integration</div>
+                        <h2 style="margin-bottom:26px;">Microsoft Business Central 365</h2>
+                    </div>
+
+                    <div class="row">
+                        <div class="card f1">
+                            <h4 style="margin-bottom:14px;color:white;"><i class="fa-solid fa-database hi"></i>&nbsp;
+                                Data Pushed on Full Approval</h4>
+                            <div
+                                style="display:grid; grid-template-columns:1fr 1fr; gap:7px 18px; font-size:0.78em;color:white;">
+                                <div><span class="mu">Legal Name</span><br><span>→ displayName</span></div>
+                                <div><span class="mu">GSTIN</span><br><span>→ taxRegistrationNumber</span></div>
+                                <div><span class="mu">PAN</span><br><span>→ customField_PAN</span></div>
+                                <div><span class="mu">Credit Limit</span><br><span>→ creditLimitLCY</span></div>
+                                <div><span class="mu">Customer Group</span><br><span>→ customerPriceGroup</span></div>
+                                <div><span class="mu">Payment Terms</span><br><span>→ paymentTermsCode (Net 30)</span>
+                                </div>
+                                <div><span class="mu">Address</span><br><span>→ address (full object)</span></div>
+                                <div><span class="mu">Dealer Code (auto)</span><br><span>→ no (number series)</span>
+                                </div>
+                            </div>
+                            <hr class="div">
+                            <p class="mu" style="font-size:0.72em; margin:0;"><i
+                                    class="fa-solid fa-shield-halved hi"></i>&nbsp; OAuth 2.0 / Azure AD · BC 365 API
+                                v2.0 · Schema pre-validated · 3× auto-retry on failure</p>
+                        </div>
+
+                        <div class="col" style="flex:0 0 256px;">
+                            <div class="card green-top" style="padding:20px;">
+                                <h4 style="font-size:0.9em; margin-bottom:10px;color:white;"><i
+                                        class="fa-solid fa-barcode gr"></i>&nbsp; Auto Dealer Code</h4>
+                                <div
+                                    style="font-weight:800; font-size:1.3em; color:var(--accent-secondary); letter-spacing:1px; margin-bottom:8px;">
+                                    OBL-DLR-HR-4721</div>
+                                <p class="mu" style="font-size:0.7em; margin:0; line-height:1.6;">
+                                    <strong>OBL</strong> · {TYPE: DLR / CORP / BLDR}<br>
+                                    · {STATE: 2-letter GSTIN prefix}<br>
+                                    · {4-digit unique sequential}
+                                </p>
+                            </div>
+                            <div class="card" style="padding:20px;">
+                                <h4 style="font-size:0.9em; margin-bottom:10px;color:white;"><i
+                                        class="fa-solid fa-envelope-open-text hi"></i>&nbsp; Welcome Kit Auto-Dispatch
+                                </h4>
+                                <ul class="green-list" style="font-size:0.78em;">
+                                    <li>Dealer code + credit limit</li>
+                                    <li>Price group &amp; payment terms</li>
+                                    <li>OBL contact details</li>
+                                    <li>PDF via Email + SMS</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ══════════════════════════════════════
+  SLIDE 10 — BEFORE vs AFTER
+══════════════════════════════════════ -->
+            <section>
+                <div style="max-width:920px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Impact</div>
+                        <h2 style="margin-bottom:26px;">Before vs. After</h2>
+                    </div>
+
                     <div class="card">
-                        <i class="fa-solid fa-mobile-screen-button"></i>
-                        <h4>Dealer/Customer App</h4>
-                        <p style="font-size: 0.8em; color: var(--text-muted); line-height: 1.5;">Digital self-service
-                            profile submission, live document uploads, and a real-time <span class="highlight">8-stage
-                                Application Tracker</span>.</p>
-                    </div>
-
-                    <div class="card">
-                        <i class="fa-solid fa-laptop-file"></i>
-                        <h4>Internal Verification Portal</h4>
-                        <p style="font-size: 0.8em; color: var(--text-muted); line-height: 1.5;">Dedicated web app for
-                            centralized KYC verification, cross-functional approval routing, and automated <span
-                                class="highlight">SLA alerts</span>.</p>
+                        <table class="ctable">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th><i class="fa-solid fa-circle-xmark"></i>&nbsp; Before (Manual)</th>
+                                    <th><i class="fa-solid fa-circle-check"></i>&nbsp; After (SwiftOnboard)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Avg. Onboarding TAT</td>
+                                    <td>7 – 14 business days</td>
+                                    <td>&lt; 48 hours &nbsp;<span class="chip gr">90% faster</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Paper forms per application</td>
+                                    <td>6+ physical forms</td>
+                                    <td>Zero — 100% digital</td>
+                                </tr>
+                                <tr>
+                                    <td>Manual data entry touchpoints</td>
+                                    <td>14 touchpoints across depts</td>
+                                    <td>0 — fully automated pipeline</td>
+                                </tr>
+                                <tr>
+                                    <td>KYC error / rejection rate</td>
+                                    <td>~12% due to manual errors</td>
+                                    <td>&lt;1% — API-validated</td>
+                                </tr>
+                                <tr>
+                                    <td>Dealer application visibility</td>
+                                    <td>Phone / email follow-up only</td>
+                                    <td>Real-time 8-stage tracker</td>
+                                </tr>
+                                <tr>
+                                    <td>ERP data entry time</td>
+                                    <td>45 min per application</td>
+                                    <td>&lt;5 min — auto BC 365 push</td>
+                                </tr>
+                                <tr>
+                                    <td>Dealer drop-off rate</td>
+                                    <td>~35% (paper process)</td>
+                                    <td>&lt;5% — guided mobile form</td>
+                                </tr>
+                                <tr>
+                                    <td>SLA breach escalation</td>
+                                    <td>Not available</td>
+                                    <td>100% automated per TAT config</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
 
-            <!-- Innovative Features Slide (NEW) -->
+
+            <!-- ══════════════════════════════════════
+  SLIDE 11 — WHAT'S POSSIBLE vs SIMULATED (NEW)
+══════════════════════════════════════ -->
             <section>
-                <h2>Out-of-the-box Features</h2>
-                <p style="color: var(--accent-secondary); margin-bottom: 30px;">Pushing boundaries beyond standard
-                    onboarding</p>
-
-                <div class="card-container" style="gap: 20px;">
-                    <div class="card" style="padding: 30px 20px;">
-                        <i class="fa-solid fa-robot" style="color: var(--accent-primary);"></i>
-                        <h4 style="font-size: 1.2em;">AI-Powered Extraction</h4>
-                        <p style="font-size: 0.75em; color: var(--text-muted);">Automated OCR data extraction from
-                            uploaded documents (Aadhaar, PAN, GST) to eliminate manual form filling completely.</p>
+                <div style="max-width:920px; width:100%;">
+                    <div class="center">
+                        <div class="pill">Hackathon Scope</div>
+                        <h2 style="margin-bottom:8px;">What's Live vs. Simulated</h2>
+                        <p class="mu" style="font-size:0.85em; margin-bottom:24px;">Honest breakdown of what works
+                            end-to-end and what runs on mock/demo data</p>
                     </div>
 
-                    <div class="card" style="padding: 30px 20px;">
-                        <i class="fa-brands fa-whatsapp" style="color: var(--accent-secondary);"></i>
-                        <h4 style="font-size: 1.2em;">WhatsApp Integration</h4>
-                        <p style="font-size: 0.75em; color: var(--text-muted);">Real-time application status updates and
-                            the ability to submit missing documents directly via conversational WhatsApp flows.</p>
-                    </div>
+                    <div class="poss-grid">
 
-                    <div class="card" style="padding: 30px 20px;">
-                        <i class="fa-solid fa-location-dot" style="color: var(--accent-tertiary);"></i>
-                        <h4 style="font-size: 1.2em;">Geo-Tagging Security</h4>
-                        <p style="font-size: 0.75em; color: var(--text-muted);">Live location validation during
-                            submissions, enhancing KYC compliance and ensuring physical business verification.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Key Features / Deliverables Slide -->
-            <section>
-                <h2>Phase 1 Deliverables</h2>
-                <div class="list-container" style="width: 90%;">
-                    <ul>
-                        <li><span class="highlight">Automated KYC UI:</span> Built robust integration points for live
-                            Aadhaar, PAN, and GST validation.</li>
-                        <li><span class="highlight">Bank Verification:</span> Seamless Penny Drop validation workflows
-                            incorporated into the user journey.</li>
-                        <li><span class="highlight">Workflow Matrix:</span> Executed multi-departmental routing mockups
-                            (Sales ➔ Finance ➔ Legal).</li>
-                        <li
-                            style="background: rgba(255,176,0,0.1); padding: 15px; border-radius: 12px; border-left: 4px solid var(--accent-primary);">
-                            <span class="highlight">Architectural Pivot:</span> Replaced Microsoft BC 365 ERP with a
-                            highly scalable <span class="green-text">custom Admin Panel</span> backed by a robust <span
-                                class="blue-text">PostgreSQL database</span>.
-                        </li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- Tech Stack Slide -->
-            <section>
-                <h2>Architecture & Stack</h2>
-                <div class="card" style="display: inline-block; text-align: left; padding: 40px; min-width: 60%;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                        <div>
-                            <h4 class="blue-text"><i class="fa-brands fa-react"></i> Frontend Apps</h4>
-                            <p style="font-size: 0.85em; margin-bottom: 5px;"><strong>Dealer App:</strong> React Native
-                                (Expo)</p>
-                            <p style="font-size: 0.85em;"><strong>Internal Portal:</strong> React.js Single Page App</p>
-                        </div>
-                        <div>
-                            <h4 class="green-text"><i class="fa-solid fa-server"></i> Backend Services</h4>
-                            <p style="font-size: 0.85em; margin-bottom: 5px;"><strong>API Gateway:</strong> Express.js
-                                (Vercel)</p>
-                            <p style="font-size: 0.85em;"><strong>Database Structure:</strong> Custom PostgreSQL API</p>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                        <h4 style="margin-top: 20px; font-size: 1.1em;">OBL Dynamic Design System</h4>
-                        <div style="display: flex; gap: 15px; margin-top: 10px;">
-                            <div
-                                style="width: 40px; height: 40px; background: #FFB000; border-radius: 50%; box-shadow: 0 4px 10px rgba(255,176,0,0.4);">
-                            </div>
-                            <div
-                                style="width: 40px; height: 40px; background: #00E676; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,230,118,0.4);">
-                            </div>
-                            <div
-                                style="width: 40px; height: 40px; background: #00B0FF; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,176,255,0.4);">
-                            </div>
-                            <div
-                                style="width: 40px; height: 40px; background: #161b22; border: 2px solid #30363d; border-radius: 50%;">
+                        <!-- POSSIBLE -->
+                        <div class="poss-item yes">
+                            <i class="fa-solid fa-circle-check" style="color:var(--accent-secondary);"></i>
+                            <div>
+                                <div class="pt" style="color:var(--accent-secondary);">5-Step Onboarding Form UI</div>
+                                <div class="ps">Fully functional guided form with auto-save, inline validation, PAN/GST
+                                    regex checks, and resumable sessions.</div>
                             </div>
                         </div>
+
+                        <div class="poss-item yes">
+                            <i class="fa-solid fa-circle-check" style="color:var(--accent-secondary);"></i>
+                            <div>
+                                <div class="pt" style="color:var(--accent-secondary);">KYC API Integration Layer</div>
+                                <div class="ps">Integration points built. Mock mode active (MOCK_MODE=true in
+                                    kycService.js) — realistic latency &amp; responses simulated.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item yes">
+                            <i class="fa-solid fa-circle-check" style="color:var(--accent-secondary);"></i>
+                            <div>
+                                <div class="pt" style="color:var(--accent-secondary);">5-Dept Approval Workflow Engine
+                                </div>
+                                <div class="ps">Full routing logic built: Sales → Finance → Legal → Credit → IT. Approve
+                                    / Reject / RFI actions functional.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item yes">
+                            <i class="fa-solid fa-circle-check" style="color:var(--accent-secondary);"></i>
+                            <div>
+                                <div class="pt" style="color:var(--accent-secondary);">Admin Dashboard + OCR Panel</div>
+                                <div class="ps">Side-by-side document/OCR viewer, TAT monitor, KPI pipeline view, and
+                                    role-based access control all functional.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item yes">
+                            <i class="fa-solid fa-circle-check" style="color:var(--accent-secondary);"></i>
+                            <div>
+                                <div class="pt" style="color:var(--accent-secondary);">Real-Time Application Tracker
+                                </div>
+                                <div class="ps">8-stage timeline with timestamps, completion %, estimated TAT, and PDF
+                                    status export functional.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item yes">
+                            <i class="fa-solid fa-circle-check" style="color:var(--accent-secondary);"></i>
+                            <div>
+                                <div class="pt" style="color:var(--accent-secondary);">Notification Engine (Simulated)
+                                </div>
+                                <div class="ps">SMS, Email &amp; Push trigger logic built. Sandbox credentials in .env —
+                                    templates fire on every stage change in demo.</div>
+                            </div>
+                        </div>
+
+                        <!-- SIMULATED / NOT POSSIBLE -->
+                        <div class="poss-item no">
+                            <i class="fa-solid fa-circle-xmark" style="color:#FF5252;"></i>
+                            <div>
+                                <div class="pt" style="color:#FF5252;">Live KYC APIs (Production Keys)</div>
+                                <div class="ps">PAN, Aadhaar, GST &amp; Penny Drop run on sandbox mock data. Production
+                                    keys require RBI-compliant AUA agreement — post-hackathon.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item no">
+                            <i class="fa-solid fa-circle-xmark" style="color:#FF5252;"></i>
+                            <div>
+                                <div class="pt" style="color:#FF5252;">Live BC 365 ERP Push</div>
+                                <div class="ps">ERP bridge code complete. Live push requires OBL's BC 365 company ID
+                                    &amp; Azure AD OAuth credentials — simulated in demo with mock dealer code
+                                    generation.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item no">
+                            <i class="fa-solid fa-circle-xmark" style="color:#FF5252;"></i>
+                            <div>
+                                <div class="pt" style="color:#FF5252;">Real Dealer / Transaction Data</div>
+                                <div class="ps">Demo uses synthetic data from PNRao_SalesRetail_Customer_Master.xlsx
+                                    &amp; Dealership Form as test case templates. No live business records.</div>
+                            </div>
+                        </div>
+
+                        <div class="poss-item no">
+                            <i class="fa-solid fa-circle-xmark" style="color:#FF5252;"></i>
+                            <div>
+                                <div class="pt" style="color:#FF5252;">WhatsApp &amp; Multi-Language (v1.1)</div>
+                                <div class="ps">WhatsApp Business API integration and Hindi/regional language support
+                                    are scoped for v1.1 — explicitly out of hackathon scope.</div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </section>
 
-            <!-- End Slide -->
-            <section data-background-gradient="radial-gradient(circle at center, #1a2235 0%, #050608 100%)">
-                <i class="fa-solid fa-rocket"
-                    style="font-size: 4em; color: var(--accent-primary); margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,176,0,0.5));"></i>
-                <h1 style="font-size: 4em;">Ready for Launch</h1>
-                <h3 class="green-text" style="margin-top: 20px;">Open for Phase 1 Demo & Review</h3>
-                <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 60px; letter-spacing: 1px;">
-                    <i class="fa-solid fa-arrows-left-right"></i> Use arrow keys to navigate
-                </p>
+
+            <!-- ══════════════════════════════════════
+  SLIDE 12 — CLOSING
+══════════════════════════════════════ -->
+            <section>
+                <div class="center" style="max-width:760px; width:100%;">
+                    <div class="logo-area" style="margin-bottom:20px;"><i class="fa-solid fa-image"
+                            style="margin-right:6px;"></i> OBL Logo</div>
+
+                    <i class="fa-solid fa-rocket hi"
+                        style="font-size:3em; filter:drop-shadow(0 0 24px rgba(255,176,0,0.5)); margin-bottom:20px;"></i>
+                    <h1>Ready for Launch</h1>
+                    <h3 class="gr" style="margin-top:12px;">Open for Phase 1 Demo &amp; Review</h3>
+
+                    <div class="row" style="justify-content:center; flex-wrap:wrap; gap:14px; margin-top:36px;">
+                        <div class="card stat" style="padding:16px 24px; min-width:120px;">
+                            <div class="stat-v">&lt;48h</div>
+                            <div class="stat-l">Target TAT</div>
+                        </div>
+                        <div class="card green-top stat" style="padding:16px 24px; min-width:120px;">
+                            <div class="stat-v gr">99.5%</div>
+                            <div class="stat-l">Uptime SLA</div>
+                        </div>
+                        <div class="card blue-top stat" style="padding:16px 24px; min-width:120px;">
+                            <div class="stat-v bl">500</div>
+                            <div class="stat-l">Concurrent Apps</div>
+                        </div>
+                        <div class="card stat" style="padding:16px 24px; min-width:120px;">
+                            <div class="stat-v">7yr</div>
+                            <div class="stat-l">Audit Retention</div>
+                        </div>
+                    </div>
+
+                    <p class="mu" style="font-size:0.7em; margin-top:40px; letter-spacing:1px;">
+                        <i class="fa-solid fa-arrows-left-right"></i>&nbsp; Arrow keys to navigate &nbsp;·&nbsp; OBL
+                        SwiftOnboard v1.0 &nbsp;·&nbsp; Hackathon 2025
+                    </p>
+                </div>
             </section>
+
 
         </div>
     </div>
 
-    <!-- Reveal.js Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
     <script>
         Reveal.initialize({
@@ -425,9 +1518,11 @@
             progress: true,
             center: true,
             hash: true,
-            transition: 'none', // Removed transition animations
-            backgroundTransition: 'none', // Removed background transition
+            transition: 'fade',
+            transitionSpeed: 'fast',
+            backgroundTransition: 'none',
             slideNumber: 'c/t',
+            margin: 0.04,
         });
     </script>
 </body>

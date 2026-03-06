@@ -33,8 +33,8 @@ OBL SwiftOnboard replaces the manual paper-based process. It operates as a hub c
 
 ### 2.2 Objective to provide to Customers & Internal Teams
 1.  **Customer Portal/Mobile App:** Secure login to upload documents and track status.
-2.  **Centralized Verification Dashboard (Separate Web App):** A dedicated web application for internal teams (Finance, Legal, etc.) to view OCR-extracted data alongside uploaded images, process approvals, and manage queues.
-3.  **Automated Escalations:** Alerts for TAT breaches.
+3.  **Centralized Verification Dashboard (Simple React App):** A lightweight, fast internal React web application for administrative users to simply view application details and list incoming requests, focusing on speed rather than complex security overhead.
+4.  **Automated Escalations:** Alerts for TAT breaches.
 4.  **Final Welcome Kit:** Auto-generation of dealer code and digital welcome kit upon database insertion.
 
 ---
@@ -70,30 +70,37 @@ OBL SwiftOnboard replaces the manual paper-based process. It operates as a hub c
 
 ---
 
-## 4. "Out of the Box" (Innovative Hackathon Features)
-To exceed the standard evaluation criteria and provide a truly next-generation experience, the following features are included:
-*   **AI-Powered Auto-Fill (Vision OCR):** Dealers can simply upload a picture of their GST Certificate or PAN, and the system uses AI Vision to extract and auto-fill the entire digital form, achieving "zero manual data entry" for the user.
-*   **WhatsApp Bot Integration:** Dealers can check their application status or receive instant alerts via WhatsApp, recognizing that many non-technical users prefer WhatsApp over installing standalone portals.
-*   **Geo-Tagging & Liveness Check:** The app captures background GPS coordinates during submission to verify the physical dealership location, and includes a quick "video selfie" step for fraud prevention (liveness detection).
-*   **Automated Anomaly Detection:** The system flags applications submitted from identical IP addresses with different dealership names for manual review to prevent spam/fraud.
+### 3.7 Backend API Requirements (Express/Node.js)
+*   **FR-API-01:** Provide authenticated RESTful endpoints for mobile and web frontends.
+*   **FR-API-02:** Implement input validation for all incoming dealer data using standard middleware.
+*   **FR-API-03:** Manage connection pooling for PostgreSQL database to handle concurrent application submissions.
+*   **FR-API-04:** Log all departmental approval transitions to an audit table in the database.
+
+### 3.8 Admin Web Portal Requirements (ReactJS)
+*   **FR-WEB-01:** Lightweight single-page application (SPA) focused on "List and View" functionality for rapid institutional processing.
+*   **FR-WEB-02:** Departmental Queues: Clear visibility of pending applications for Sales, Finance, Legal, etc.
+*   **FR-WEB-03:** Document Review: Side-by-side view of uploaded documents and extracted OCR data for instant verification.
+*   **FR-WEB-04:** Simple Approval Interface: Dedicated Approve/Reject/RFI actions for each workflow stage.
 
 ---
 
-## 5. Non-Functional Requirements (Evaluation Criteria)
-
-*   **Data Integrity:** Prevent fraudulent entries via real-time KYC API validation and OCR cross-verification.
-*   **Process Efficiency:** Slash onboarding TAT from 7-14 days to < 48 hours. Zero manual data entry.
-*   **User Experience (UX):** Guided mobile form allowing non-technical dealers to complete onboarding without help.
-*   **Security & Compliance:** 
-    *   TLS 1.3 for data in transit. 
-    *   AES-256 for PII data at rest.
-    *   Compliance with UIDAI and DPDP Act 2023.
-*   **Workflow Logic:** Effectively handle rejections, resubmissions, and escalations.
+## 4. "Out of the Box" (Innovative Hackathon Features)
+*   **AI-Powered OCR Extraction:** Intelligent data extraction from GST/PAN docs to enable zero-manual-entry onboarding.
+*   **WhatsApp Sync:** Conversational application tracking and document requests via WhatsApp.
+*   **Geo-Security & Liveness:** Live GPS tagging and video selfies during submission for fraud prevention.
 
 ---
 
 ## 5. System Architecture & Tech Stack
-*   **Dealer App:** Expo / React Native (Mobile Interface)
-*   **Verification Dashboard:** React Web App (Separate Internal Portal)
-*   **Backend API:** Express.js / Node.js (Hosted on Vercel)
-*   **Theme Styling:** Dark mode MVP with Supernova (`#FFCC00`), Mustard (`#FED94B`), and Sea Green (`#288840`) accents.
+*   **Mobile App:** React Native / Expo SDK 54 (Dealer application).
+*   **Backend Hub:** Node.js / Express.js (REST API & PostgreSQL persistence).
+*   **Admin Dashboard:** React.js (Focused "Inbox" for internal approvals).
+*   **Cloud Hosting:** Vercel (API & Web) for seamless scaling.
+
+---
+
+## 6. Evaluation Criteria
+*   **Onboarding TAT:** Reduction from 7-14 days to < 48 hours.
+*   **Data Integrity:** Multi-layered verification (API + OCR + Manual Review).
+*   **UX Excellence:** Mobile-first, guided friction-less experience for dealers.
+*   **Scalability:** Decoupled architecture allowing independent scaling of apps and APIs.
