@@ -1,13 +1,38 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { COLORS, RADIUS } from '@services/index';
+import { Bell, FileCheck, FileX, FileClock, Plus } from 'lucide-react-native';
+import apiClient from '@services/index';
 
 export default function HomeScreen({ navigation }) {
-  // Mock data for MVP dashboard
-  const user = { name: "Rajesh Kumar", role: "Dealer" };
-  const apps = [
-    { id: "OBL-849201", status: "Under Review", date: "Oct 24, 2025", step: "Finance Approval" }
-  ];
+  const [apps, setApps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Try to load user name from context/storage in production
+  const user = { name: "Dealer", role: "Dealer" };
+
+  useEffect(() => {
+    const fetchApps = async () => {
+      try {
+        const res = await apiClient.get('/applications');
+        if (res.data?.success) {
+          setApps(res.data.data);
+        }
+      } catch (err) {
+        console.log("HomeScreen Fetch Apps Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    // Refresh on focus
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchApps();
+    });
+    
+    fetchApps();
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -17,7 +42,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={styles.greeting}>Welcome back,</Text>
             <Text style={styles.userName}>{user.name}</Text>
           </View>
-          <Image source={require('../../../logo.png')} style={styles.logo} resizeMode="contain" />
+          <Image source={require('@assets/logo.png')} style={styles.logo} resizeMode="contain" />
         </View>
       </View>
       
@@ -26,15 +51,18 @@ export default function HomeScreen({ navigation }) {
         {/* Quick Actions / Stats */}
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>1</Text>
+            <FileClock color={COLORS.accent} size={28} style={{ marginBottom: 8 }} />
+            <Text style={styles.statValue}>{apps.filter(a => !['APPROVED', 'REJECTED'].includes(a.status)).length}</Text>
             <Text style={styles.statLabel}>Active App</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statValue}>0</Text>
+            <FileX color={COLORS.textSecondary} size={28} style={{ marginBottom: 8 }} />
+            <Text style={styles.statValue}>{apps.filter(a => a.status === 'REJECTED').length}</Text>
             <Text style={styles.statLabel}>Rejected</Text>
           </View>
-          <View style={[styles.statCard, {backgroundColor: 'rgba(40, 136, 64, 0.1)'}]}>
-            <Text style={[styles.statValue, {color: COLORS.green}]}>0</Text>
+          <View style={[styles.statCard, {backgroundColor: 'rgba(40, 136, 64, 0.1)', borderColor: 'rgba(40, 136, 64, 0.2)'}]}>
+            <FileCheck color={COLORS.green} size={28} style={{ marginBottom: 8 }} />
+            <Text style={[styles.statValue, {color: COLORS.green}]}>{apps.filter(a => a.status === 'APPROVED').length}</Text>
             <Text style={styles.statLabel}>Approved</Text>
           </View>
         </View>
@@ -42,56 +70,65 @@ export default function HomeScreen({ navigation }) {
         {/* Active Application Card */}
         <Text style={styles.sectionTitle}>Recent Applications</Text>
         
-        {apps.map((app, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={styles.appCard}
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('Track')}
-          >
-            <View style={styles.appCardHeader}>
-              <Text style={styles.appId}>{app.id}</Text>
-              <View style={styles.statusBadge}>
-                <Text style={styles.statusText}>{app.status}</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color={COLORS.accent} style={{marginVertical: 20}} />
+        ) : apps.length === 0 ? (
+          <Text style={{color: COLORS.textMuted, fontSize: 13, paddingVertical: 20}}>No applications yet. Start by tapping +.</Text>
+        ) : apps.slice(0, 3).map((app, index) => {
+          const formattedDate = new Date(app.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          return (
+            <TouchableOpacity 
+              key={app.id || index} 
+              style={styles.appCard}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('Track', { appId: app.id })}
+            >
+              <View style={styles.appCardHeader}>
+                <Text style={styles.appId}>{app.id}</Text>
+                <View style={styles.statusBadge}>
+                  <Text style={styles.statusText}>{app.status?.replace(/_/g, ' ')}</Text>
+                </View>
               </View>
-            </View>
-            
-            <View style={styles.appCardBody}>
-              <View style={styles.appDetail}>
-                <Text style={styles.detailLabel}>Submitted</Text>
-                <Text style={styles.detailValue}>{app.date}</Text>
+              
+              <View style={styles.appCardBody}>
+                <View style={styles.appDetail}>
+                  <Text style={styles.detailLabel}>Submitted</Text>
+                  <Text style={styles.detailValue}>{formattedDate}</Text>
+                </View>
+                <View style={styles.appDetail}>
+                  <Text style={styles.detailLabel}>Current Stage</Text>
+                  <Text style={styles.detailValue}>{app.status?.replace(/_/g, ' ')}</Text>
+                </View>
               </View>
-              <View style={styles.appDetail}>
-                <Text style={styles.detailLabel}>Current Stage</Text>
-                <Text style={styles.detailValue}>{app.step}</Text>
+              
+              <View style={styles.appCardFooter}>
+                <Text style={styles.footerText}>Tap to view full timeline →</Text>
               </View>
-            </View>
-            
-            <View style={styles.appCardFooter}>
-              <Text style={styles.footerText}>Tap to view full timeline →</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          );
+        })}
 
         {/* Notifications / Alerts */}
         <Text style={styles.sectionTitle}>Notifications</Text>
-        <View style={styles.notificationCard}>
-          <View style={styles.dot} />
-          <View style={styles.notificationContent}>
-            <Text style={styles.notificationTitle}>Application Received</Text>
-            <Text style={styles.notificationText}>Your application {apps[0].id} has been received and is currently under review by the Sales Team.</Text>
-            <Text style={styles.notificationTime}>2 hours ago</Text>
+        {apps.length > 0 ? (
+          <View style={styles.notificationCard}>
+            <Bell color={COLORS.accent} size={24} style={{ marginRight: 12, marginTop: 4 }} />
+            <View style={styles.notificationContent}>
+              <Text style={styles.notificationTitle}>Status Update</Text>
+              <Text style={styles.notificationText}>Your latest application {apps[0].id} is currently {apps[0].status?.replace(/_/g, ' ')}.</Text>
+            </View>
           </View>
-        </View>
+        ) : (
+          <Text style={{color: COLORS.textMuted, fontSize: 13}}>No recent notifications.</Text>
+        )}
 
       </ScrollView>
 
-      {/* Floating Action Button to start new application if needed, though they only have 1 usually */}
       <TouchableOpacity 
         style={styles.fab}
-        onPress={() => navigation.navigate('Apply')}
+        onPress={() => navigation.navigate('ApplyStack')}
       >
-        <Text style={styles.fabText}>+</Text>
+        <Plus color={COLORS.bg} size={32} />
       </TouchableOpacity>
     </View>
   );

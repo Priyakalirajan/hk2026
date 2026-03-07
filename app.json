@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",

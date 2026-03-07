@@ -1,22 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from 'react-native';
+import { COLORS, RADIUS } from '@services/index';
+import apiClient from '@services/index';
 
 export default function Step1_BusinessInfo({ navigation }) {
   const [formData, setFormData] = useState({
-    legalName: '',
-    tradeName: '',
-    entityType: '',
-    contactName: '',
-    email: '',
+    name: '',
+    dob: '',
+    address: '',
   });
 
-  const handleNext = () => {
-    if (!formData.legalName || !formData.tradeName || !formData.contactName) {
+  const [loading, setLoading] = useState(false);
+
+  const handleNext = async () => {
+    if (!formData.name || !formData.dob || !formData.address) {
       Alert.alert('Missing Fields', 'Please fill in all mandatory fields before proceeding.');
       return;
     }
-    navigation.navigate('Step2', { formData });
+
+    setLoading(true);
+    try {
+      // Create new application
+      const createRes = await apiClient.post('/applications');
+      if (createRes.data?.success) {
+        const appId = createRes.data.data.applicationId;
+        
+        // Save Step 1 data
+        await apiClient.patch(`/applications/${appId}/step`, {
+          step: 1,
+          data: formData
+        });
+
+        navigation.navigate('Step2', { formData: { ...formData, applicationId: appId } });
+      }
+    } catch (e) {
+      console.log(e);
+      Alert.alert('Error', 'Failed to start application. Please check your connection.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,48 +51,37 @@ export default function Step1_BusinessInfo({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Legal Name *</Text>
+          <Text style={styles.label}>Full Name *</Text>
           <TextInput
             style={styles.input}
-            placeholder="As per PAN card"
+            placeholder="As per Aadhaar/PAN"
             placeholderTextColor={COLORS.textMuted}
-            value={formData.legalName}
-            onChangeText={(text) => setFormData({ ...formData, legalName: text })}
+            value={formData.name}
+            onChangeText={(text) => setFormData({ ...formData, name: text })}
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Trade / Brand Name *</Text>
+          <Text style={styles.label}>Date of Birth *</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. Acme Enterprises"
+            placeholder="DD/MM/YYYY"
             placeholderTextColor={COLORS.textMuted}
-            value={formData.tradeName}
-            onChangeText={(text) => setFormData({ ...formData, tradeName: text })}
+            value={formData.dob}
+            onChangeText={(text) => setFormData({ ...formData, dob: text })}
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Primary Contact Name *</Text>
+          <Text style={styles.label}>Full Address *</Text>
           <TextInput
-            style={styles.input}
-            placeholder="Full Name"
+            style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+            placeholder="Enter complete address"
             placeholderTextColor={COLORS.textMuted}
-            value={formData.contactName}
-            onChangeText={(text) => setFormData({ ...formData, contactName: text })}
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Business Email Address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="contact@company.com"
-            placeholderTextColor={COLORS.textMuted}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={formData.email}
-            onChangeText={(text) => setFormData({ ...formData, email: text })}
+            multiline
+            numberOfLines={4}
+            value={formData.address}
+            onChangeText={(text) => setFormData({ ...formData, address: text })}
           />
         </View>
 
@@ -81,8 +92,12 @@ export default function Step1_BusinessInfo({ navigation }) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
-          <Text style={styles.nextBtnText}>Next: KYC Details</Text>
+        <TouchableOpacity style={styles.nextBtn} onPress={handleNext} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color={COLORS.bg} size="small" />
+          ) : (
+            <Text style={styles.nextBtnText}>Next: KYC Details</Text>
+          )}
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

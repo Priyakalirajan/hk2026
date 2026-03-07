@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Animated, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { COLORS, FONTS, RADIUS } from '../../constants/theme';
-import { API_BASE } from '../../constants/apiEndpoints';
+import { COLORS, FONTS, RADIUS } from '@services/index';
+import { API_BASE } from '@services/index';
 
 export default function OTPVerifyScreen({ route, navigation }) {
-  const { phone, role, demo } = route.params || {};
+  const { aadhaar, txnId, role, demo } = route.params || {};
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   
@@ -12,10 +12,11 @@ export default function OTPVerifyScreen({ route, navigation }) {
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (demo) {
-      setTimeout(() => setOtp(['1', '2', '3', '4', '5', '6']), 500);
+    // If using the demo Aadhaars, instantly fill the mock OTP 123456
+    if (aadhaar === '111111111111' || aadhaar === '222222222222') {
+      setTimeout(() => setOtp(['1', '2', '3', '4', '5', '6']), 600);
     }
-  }, [demo]);
+  }, [aadhaar]);
 
   const handleChange = (text, index) => {
     const newOtp = [...otp];
@@ -44,7 +45,9 @@ export default function OTPVerifyScreen({ route, navigation }) {
 
   const handleVerify = async () => {
     const otpValue = otp.join('');
-    if (otpValue.length !== 6) {
+    // We remove the strict 6-digit length check so users can force an error 
+    // or type any OTP if needed.
+    if (!otpValue) {
       triggerShake();
       return;
     }
@@ -52,38 +55,34 @@ export default function OTPVerifyScreen({ route, navigation }) {
     setLoading(true);
 
     try {
-      // Demo login
-      if (demo && otpValue === '123456') {
-        setTimeout(() => {
-          setLoading(false);
-          navigation.replace(role === 'Dealer' ? 'DealerApp' : 'AdminApp');
-        }, 800);
-        return;
-      }
+      // Let all OTPs (even the demo one) hit the backend to show the real Sandbox integration.
+      // We'll rely on the backend (or our mock there) to accept '123456'.
 
-      // Actual expected API call
-      // const response = await fetch(`${API_BASE}/auth/verify-otp`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ phone, otp: otpValue })
-      // });
-      // const data = await response.json();
+      const response = await fetch(`${API_BASE}/kyc/aadhaar/verify-otp`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer mock' 
+        },
+        body: JSON.stringify({ txnId, otp: otpValue, applicationId: 'LOGIN-AUTH' })
+      });
+      const data = await response.json();
       
-      if (otpValue === '123456') {
-        setTimeout(() => {
-           setLoading(false);
-           navigation.replace(role === 'Dealer' ? 'DealerApp' : 'AdminApp');
-        }, 1200);
+      if (data.success && data.data?.verified) {
+         setLoading(false);
+         // Simulate logging in after KYC auth
+         navigation.replace(role === 'Dealer' ? 'DealerApp' : 'AdminApp');
       } else {
         setLoading(false);
         triggerShake();
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0].focus();
+        Alert.alert('Verification Failed', data.error || 'Invalid OTP');
       }
 
     } catch (error) {
       setLoading(false);
-      Alert.alert('Error', 'Failed to verify OTP.');
+      Alert.alert('Error', 'Failed to verify OTP with Backend.');
     }
   };
 
@@ -96,8 +95,8 @@ export default function OTPVerifyScreen({ route, navigation }) {
       </View>
       
       <View style={styles.content}>
-        <Text style={styles.title}>Verify OTP</Text>
-        <Text style={styles.subtitle}>Enter the 6-digit code sent to +91 {phone}</Text>
+        <Text style={styles.title}>Verify Aadhaar OTP</Text>
+        <Text style={styles.subtitle}>Enter the 6-digit code sent to Aadhaar linked mobile number for UID {aadhaar?.slice(-4) || 'XXXX'}</Text>
 
         <Animated.View style={[styles.otpContainer, { transform: [{ translateX: shakeAnim }] }]}>
           {otp.map((digit, index) => (

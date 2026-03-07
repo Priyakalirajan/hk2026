@@ -1,38 +1,63 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { COLORS, RADIUS } from '@services/index';
+import { Ionicons } from '@expo/vector-icons';
+import apiClient from '@services/index';
 
 export default function AdminDashboard({ navigation }) {
-  // Mock data for Admin MVP dashboard
-  const user = { name: "Aditi Sharma", role: "Finance Head" };
-  
+  const user = { name: "Admin Setup", role: "Management" };
+  const [apps, setApps] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchApps = async () => {
+      try {
+        const res = await apiClient.get('/applications');
+        if (res.data?.success) {
+          setApps(res.data.data);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const unsubscribe = navigation.addListener('focus', fetchApps);
+    fetchApps();
+    return unsubscribe;
+  }, [navigation]);
+
+  const pendingCount = apps.filter(a => !['APPROVED', 'REJECTED', 'DRAFT'].includes(a.status)).length;
+  const approvedCount = apps.filter(a => a.status === 'APPROVED').length;
+  const rejectedCount = apps.filter(a => a.status === 'REJECTED').length;
+
   const metrics = [
-    { label: "Pending Verification", value: "12", color: COLORS.accent },
-    { label: "Approved Today", value: "8", color: COLORS.green },
-    { label: "Rejected", value: "1", color: COLORS.red },
-    { label: "Avg TAT", value: "4h", color: COLORS.blue },
+    { label: "Pending Verification", value: pendingCount.toString(), color: COLORS.accent },
+    { label: "Total Approved", value: approvedCount.toString(), color: COLORS.green },
+    { label: "Total Rejected", value: rejectedCount.toString(), color: COLORS.red },
+    { label: "Avg TAT", value: "24h", color: COLORS.blue },
   ];
 
-  const recentApps = [
-    { id: "OBL-849201", dealer: "Rajesh Kumar", status: "Pending Finance", time: "2h ago" },
-    { id: "OBL-849190", dealer: "Singh Traders", status: "Pending Legal", time: "5h ago" },
-    { id: "OBL-849185", dealer: "Metro Ceramics", status: "Approved", time: "1d ago" },
-  ];
+  const recentApps = apps.slice(0, 3);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.greeting}>Admin Portal</Text>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userRole}>{user.role}</Text>
-          </View>
-          <Image source={require('../../../logo.png')} style={styles.logo} resizeMode="contain" />
+          <Image source={require('@assets/logo.png')} style={styles.logo} resizeMode="contain" />
+          <TouchableOpacity style={styles.notificationBtn}>
+            <Ionicons name="notifications-outline" size={22} color={COLORS.text} />
+            <View style={styles.notificationDot} />
+          </TouchableOpacity>
         </View>
       </View>
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        
+        <View style={styles.greetingSection}>
+          <Text style={styles.greetingTitle}>Hello, {user.name.split(' ')[0]} 👋</Text>
+          <Text style={styles.greetingSub}>Here's what's happening today.</Text>
+        </View>
         
         {/* KPI Metrics */}
         <Text style={styles.sectionTitle}>Overview</Text>
@@ -53,38 +78,45 @@ export default function AdminDashboard({ navigation }) {
           </TouchableOpacity>
         </View>
         
-        {recentApps.map((app, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={styles.appCard}
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate('AppList')}
-          >
-            <View style={styles.appCardRow}>
-              <View style={styles.appInfo}>
-                <Text style={styles.appId}>{app.id}</Text>
-                <Text style={styles.appDealer}>{app.dealer}</Text>
-              </View>
-              <View style={styles.appStatusBox}>
-                <Text style={styles.appTime}>{app.time}</Text>
-                <View style={[
-                  styles.statusBadge, 
-                  app.status === 'Approved' ? styles.statusBadgeSuccess : styles.statusBadgeWarning
-                ]}>
-                  <Text style={[
-                    styles.statusText,
-                    app.status === 'Approved' ? styles.statusTextSuccess : styles.statusTextWarning
-                  ]}>{app.status}</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color={COLORS.accent} style={{marginVertical: 20}} />
+        ) : recentApps.length === 0 ? (
+          <Text style={{color: COLORS.textMuted, fontSize: 13, marginBottom: 20}}>No applications found.</Text>
+        ) : recentApps.map((app, index) => {
+          const formattedDate = new Date(app.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+          return (
+            <TouchableOpacity 
+              key={index} 
+              style={styles.appCard}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('AppList')}
+            >
+              <View style={styles.appCardRow}>
+                <View style={styles.appInfo}>
+                  <Text style={styles.appId}>{app.id}</Text>
+                  <Text style={styles.appDealer}>{app.dealer}</Text>
+                </View>
+                <View style={styles.appStatusBox}>
+                  <Text style={styles.appTime}>{formattedDate}</Text>
+                  <View style={[
+                    styles.statusBadge, 
+                    app.status === 'APPROVED' ? styles.statusBadgeSuccess : styles.statusBadgeWarning
+                  ]}>
+                    <Text style={[
+                      styles.statusText,
+                      app.status === 'APPROVED' ? styles.statusTextSuccess : styles.statusTextWarning
+                    ]}>{app.status?.replace(/_/g, ' ')}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          );
+        })}
 
         {/* System Alerts */}
         <Text style={styles.sectionTitle}>System Alerts</Text>
         <View style={styles.alertCard}>
-          <Text style={styles.alertIcon}>⚠️</Text>
+          <Ionicons name="warning" size={24} color={COLORS.red} style={{ marginRight: 12 }} />
           <View style={styles.alertContent}>
             <Text style={styles.alertTitle}>TAT Breach Warning</Text>
             <Text style={styles.alertText}>3 applications in Legal Queue have breached the 24-hour SLA.</Text>
@@ -108,12 +140,15 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border
   },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  greeting: { color: COLORS.accent, fontSize: 13, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
-  userName: { color: COLORS.text, fontSize: 22, fontWeight: 'bold' },
-  userRole: { color: COLORS.textSecondary, fontSize: 14, marginTop: 2 },
-  logo: { width: 100, height: 35 },
+  logo: { width: 120, height: 35 },
+  notificationBtn: { padding: 8, backgroundColor: COLORS.surface2, borderRadius: 20 },
+  notificationDot: { position: 'absolute', top: 8, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: COLORS.red },
   
   scrollContent: { padding: 24, paddingBottom: 60 },
+  
+  greetingSection: { marginBottom: 24 },
+  greetingTitle: { color: COLORS.text, fontSize: 26, fontWeight: 'bold' },
+  greetingSub: { color: COLORS.textSecondary, fontSize: 14, marginTop: 4 },
   
   sectionTitle: { color: COLORS.text, fontSize: 18, fontWeight: 'bold', marginBottom: 16, marginTop: 8 },
   

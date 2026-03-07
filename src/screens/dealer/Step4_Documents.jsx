@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { COLORS, RADIUS } from '@services/index';
+import apiClient from '@services/index';
 
 export default function Step4_Documents({ route, navigation }) {
   const { formData } = route.params || { formData: {} };
@@ -11,36 +13,74 @@ export default function Step4_Documents({ route, navigation }) {
     bank: false,
     address: false,
   });
+  
+  const [saving, setSaving] = useState(false);
 
-  const handleUpload = (docType) => {
-    // Mocking an image picker / upload process
+  const handleUpload = async (docType) => {
     Alert.alert(
       'Upload Document',
       `Choose an upload method for your ${docType.toUpperCase()}`,
       [
-        { text: 'Take Photo', onPress: () => markUploaded(docType) },
-        { text: 'Choose from Gallery', onPress: () => markUploaded(docType) },
+        { text: 'Take Photo', onPress: () => pickImage(docType, true) },
+        { text: 'Choose from Gallery', onPress: () => pickImage(docType, false) },
         { text: 'Cancel', style: 'cancel' }
       ]
     );
   };
 
-  const markUploaded = (docType) => {
-    setDocuments(prev => ({ ...prev, [docType]: true }));
+  const pickImage = async (docType, useCamera) => {
+    const options = {
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      quality: 0.5,
+      base64: true,
+    };
+
+    try {
+      let result;
+      if (useCamera) {
+        await ImagePicker.requestCameraPermissionsAsync();
+        result = await ImagePicker.launchCameraAsync(options);
+      } else {
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+        result = await ImagePicker.launchImageLibraryAsync(options);
+      }
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const base64Data = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        setDocuments(prev => ({ ...prev, [docType]: base64Data }));
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to pick image');
+    }
   };
 
-  const handleNext = () => {
+
+  const handleNext = async () => {
     if (!documents.pan || !documents.gst || !documents.bank) {
       Alert.alert('Missing Documents', 'Please upload mandatory documents (PAN, GST, Bank Proof).');
       return;
     }
-    navigation.navigate('Step5', { formData });
+    
+    setSaving(true);
+    try {
+      await apiClient.patch(`/applications/${formData.applicationId || 'NEW_APP'}/step`, {
+        step: 4,
+        data: documents
+      });
+      navigation.navigate('Step5', { formData: { ...formData, documents } });
+    } catch (e) {
+      console.log(e);
+      Alert.alert('Error', 'Failed to save documents.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={require('../../../logo.png')} style={styles.headerLogo} resizeMode="contain" />
+        <Image source={require('@assets/logo.png')} style={styles.headerLogo} resizeMode="contain" />
         <Text style={styles.headerTitle}>Step 4: Documents</Text>
         <Text style={styles.headerSubtitle}>Upload supporting documents for your application</Text>
       </View>
@@ -113,9 +153,13 @@ export default function Step4_Documents({ route, navigation }) {
         <TouchableOpacity 
           style={[styles.nextBtn, (!documents.pan || !documents.gst || !documents.bank) && styles.nextBtnDisabled]} 
           onPress={handleNext}
-          disabled={!documents.pan || !documents.gst || !documents.bank}
+          disabled={!documents.pan || !documents.gst || !documents.bank || saving}
         >
-          <Text style={styles.nextBtnText}>Next: Declaration</Text>
+          {saving ? (
+            <ActivityIndicator color={COLORS.bg} size="small" />
+          ) : (
+            <Text style={styles.nextBtnText}>Next: Declaration</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

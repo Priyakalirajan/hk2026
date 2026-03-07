@@ -1,76 +1,144 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { COLORS, RADIUS } from '@services/index';
+import apiClient from '@services/index';
+import { Search } from 'lucide-react-native';
 
-export default function ApplicationTracker({ navigation }) {
-  // Mock data for the timeline
-  const appId = "OBL-849201";
+export default function ApplicationTracker({ route, navigation }) {
+  const initialAppId = route?.params?.appId || '';
+  const [searchId, setSearchId] = useState(initialAppId);
+  const [appId, setAppId] = useState(initialAppId);
   
-  const timelineSteps = [
-    { title: "Application Submitted", date: "Oct 24, 10:00 AM", status: "completed" },
-    { title: "Document Verification", date: "Oct 24, 11:30 AM", status: "completed" },
-    { title: "Sales Approval", date: "Oct 25, 09:15 AM", status: "completed" },
-    { title: "Finance Check", date: "In Progress", status: "active" },
-    { title: "Credit Control", date: "-", status: "pending" },
-    { title: "Legal Review", date: "-", status: "pending" },
-    { title: "ERP Integration", date: "-", status: "pending" },
-    { title: "Dealer Code Generated", date: "-", status: "pending" },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [trackData, setTrackData] = useState(null);
+
+  useEffect(() => {
+    if (appId) {
+      fetchTracking(appId);
+    }
+  }, [appId]);
+
+  // If opened via bottom bar again with a different param
+  useEffect(() => {
+    if (route?.params?.appId && route.params.appId !== appId) {
+      setSearchId(route.params.appId);
+      setAppId(route.params.appId);
+    }
+  }, [route?.params?.appId]);
+
+  const fetchTracking = async (idToFetch) => {
+    if (!idToFetch) return;
+    setLoading(true);
+    try {
+      // Backend route is /api/applications/:id/track
+      const res = await apiClient.get(`/applications/${idToFetch}/track`);
+      if (res.data?.success) {
+        setTrackData(res.data.data);
+      } else {
+        setTrackData(null);
+        Alert.alert('Error', res.data?.error || 'Could not find tracking data');
+      }
+    } catch (err) {
+      console.log("Tracking Error:", err);
+      setTrackData(null);
+      Alert.alert('Not Found', 'Invalid application ID or network error.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    if (!searchId) return;
+    setAppId(searchId);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={require('../../../logo.png')} style={styles.headerLogo} resizeMode="contain" />
+        <Image source={require('@assets/logo.png')} style={styles.headerLogo} resizeMode="contain" />
         <Text style={styles.headerTitle}>Application Tracker</Text>
-        <Text style={styles.headerSubtitle}>ID: {appId}</Text>
+        
+        <View style={styles.searchContainer}>
+          <TextInput 
+            style={styles.searchInput}
+            placeholder="Enter Application ID (e.g. OBL-XXX)"
+            placeholderTextColor={COLORS.textMuted}
+            value={searchId}
+            onChangeText={setSearchId}
+            autoCapitalize="characters"
+          />
+          <TouchableOpacity style={styles.searchBtn} onPress={handleSearch}>
+            <Search color={COLORS.bg} size={20} />
+          </TouchableOpacity>
+        </View>
       </View>
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
-        <View style={styles.statusBox}>
-          <Text style={styles.statusBoxTitle}>Current Stage</Text>
-          <Text style={styles.statusBoxValue}>Finance Check</Text>
-          <Text style={styles.statusBoxDesc}>Expected completion: 12 Hours</Text>
-        </View>
+        {loading && <ActivityIndicator size="large" color={COLORS.accent} style={{ marginTop: 40 }} />}
+        
+        {!loading && !trackData && !appId && (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>Enter your Application ID above to track its current progress.</Text>
+          </View>
+        )}
 
-        <View style={styles.timelineContainer}>
-          {timelineSteps.map((step, index) => {
-            const isLast = index === timelineSteps.length - 1;
-            
-            // Determine styles based on status
-            let dotColor = COLORS.border;
-            let dotBg = COLORS.surface;
-            let lineBg = COLORS.border;
-            let titleColor = COLORS.textMuted;
+        {!loading && trackData && (
+          <>
+            <View style={styles.statusBox}>
+              <Text style={styles.statusBoxTitle}>Current Stage</Text>
+              <Text style={styles.statusBoxValue}>{trackData.currentStage?.replace(/_/g, ' ')}</Text>
+              <Text style={styles.statusBoxDesc}>{trackData.completion}% Complete</Text>
+            </View>
 
-            if (step.status === 'completed') {
-              dotColor = COLORS.green;
-              dotBg = COLORS.green;
-              lineBg = COLORS.green;
-              titleColor = COLORS.text;
-            } else if (step.status === 'active') {
-              dotColor = COLORS.accent;
-              dotBg = COLORS.bg;
-              titleColor = COLORS.accent;
-            }
-
-            return (
-              <View key={index} style={styles.timelineRow}>
-                {/* Left side: Timeline graphics */}
-                <View style={styles.timelineGraphic}>
-                  <View style={[styles.dot, { borderColor: dotColor, backgroundColor: dotBg }]} />
-                  {!isLast && <View style={[styles.line, { backgroundColor: lineBg }]} />}
-                </View>
+            <View style={styles.timelineContainer}>
+              {trackData.timeline?.map((step, index) => {
+                const isLast = index === trackData.timeline.length - 1;
                 
-                {/* Right side: Content */}
-                <View style={styles.timelineContent}>
-                  <Text style={[styles.stepTitle, { color: titleColor }]}>{step.title}</Text>
-                  <Text style={styles.stepDate}>{step.date}</Text>
-                </View>
-              </View>
-            );
-          })}
-        </View>
+                // Determine styles based on status
+                let dotColor = COLORS.border;
+                let dotBg = COLORS.surface;
+                let lineBg = COLORS.border;
+                let titleColor = COLORS.textMuted;
+                let dateDisplay = '-';
+
+                if (step.status === 'COMPLETED') {
+                  dotColor = COLORS.green;
+                  dotBg = COLORS.green;
+                  lineBg = COLORS.green;
+                  titleColor = COLORS.text;
+                  if (step.completedAt) {
+                    const d = new Date(step.completedAt);
+                    dateDisplay = `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })}, ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                  } else {
+                    dateDisplay = 'Completed';
+                  }
+                } else if (step.status === 'IN_PROGRESS') {
+                  dotColor = COLORS.accent;
+                  dotBg = COLORS.bg;
+                  titleColor = COLORS.accent;
+                  dateDisplay = 'In Progress';
+                }
+
+                return (
+                  <View key={index} style={styles.timelineRow}>
+                    {/* Left side: Timeline graphics */}
+                    <View style={styles.timelineGraphic}>
+                      <View style={[styles.dot, { borderColor: dotColor, backgroundColor: dotBg }]} />
+                      {!isLast && <View style={[styles.line, { backgroundColor: lineBg }]} />}
+                    </View>
+                    
+                    {/* Right side: Content */}
+                    <View style={styles.timelineContent}>
+                      <Text style={[styles.stepTitle, { color: titleColor }]}>{step.label}</Text>
+                      <Text style={styles.stepDate}>{dateDisplay}</Text>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          </>
+        )}
 
       </ScrollView>
 
@@ -139,4 +207,32 @@ const styles = StyleSheet.create({
   },
   stepTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 4 },
   stepDate: { color: COLORS.textMuted, fontSize: 13 },
+  
+  searchContainer: {
+    flexDirection: 'row',
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  searchInput: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 16,
+    height: 48,
+    color: COLORS.text,
+    fontSize: 16,
+    marginRight: 12,
+  },
+  searchBtn: {
+    backgroundColor: COLORS.accent,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: RADIUS.md,
+  },
+  emptyState: { padding: 40, alignItems: 'center' },
+  emptyText: { color: COLORS.textMuted, fontSize: 16, textAlign: 'center', lineHeight: 24 }
 });

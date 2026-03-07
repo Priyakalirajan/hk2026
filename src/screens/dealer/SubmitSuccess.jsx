@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import { COLORS, RADIUS } from '@services/index';
 
 export default function SubmitSuccess({ navigation }) {
   // Mock application ID for MVP

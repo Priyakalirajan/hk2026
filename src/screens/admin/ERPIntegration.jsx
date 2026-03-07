@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
-import { API_BASE } from '../../constants/apiEndpoints';
+import { COLORS, RADIUS } from '@services/index';
+import { API_BASE } from '@services/index';
 
 export default function ERPIntegration({ navigation }) {
   const [syncing, setSyncing] = useState(false);

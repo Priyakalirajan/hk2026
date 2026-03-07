@@ -1,89 +1,86 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { COLORS, FONTS, RADIUS } from '../../constants/theme';
-import { API_BASE } from '../../constants/apiEndpoints';
+import { COLORS, FONTS, RADIUS } from '@services/index';
+import { API_BASE } from '@services/index';
 
 export default function LoginScreen({ navigation }) {
   const [role, setRole] = useState('Dealer'); // 'Dealer' | 'Internal'
-  const [phone, setPhone] = useState('');
+  const [aadhaar, setAadhaar] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = async () => {
-    if (phone.length !== 10) {
-      Alert.alert('Invalid Number', 'Please enter a valid 10-digit mobile number.');
+    if (aadhaar.length !== 12) {
+      Alert.alert('Invalid', 'Please enter a valid 12-digit Aadhaar number.');
       return;
     }
     
     setLoading(true);
     try {
-      // Demo logic for judges
-      if (phone === '9999999999') {
-         setTimeout(() => {
-           setLoading(false);
-           navigation.navigate('OTPVerify', { phone, role, demo: true });
-         }, 800);
-         return;
-      }
+      // Direct Hackathon Bypass mapping to local backend
+      const response = await fetch(`${API_BASE}/kyc/aadhaar/send-otp`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer mock'
+        },
+        body: JSON.stringify({ aadhaarNumber: aadhaar, applicationId: 'LOGIN-AUTH' })
+      });
+      const data = await response.json();
       
-      // Actual API call
-      // const response = await fetch(`${API_BASE}/auth/send-otp`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ phone, role })
-      // });
-      // const data = await response.json();
-      
-      // Mocking for now since we don't have the real auth backend built yet
-      setTimeout(() => {
+      if (data.success) {
         setLoading(false);
-        navigation.navigate('OTPVerify', { phone, role });
-      }, 1200);
-
+        navigation.navigate('OTPVerify', { aadhaar, txnId: data.data.txnId, role });
+      } else {
+        setLoading(false);
+        Alert.alert('Error', data.error || 'Failed to send OTP.');
+      }
     } catch (error) {
       setLoading(false);
-      Alert.alert('Error', 'Failed to send OTP. Please try again.');
+      // Fallback local mock if backend is down
+      const txnId = 'MOCK-TXN-' + Math.floor(Math.random() * 1000);
+      navigation.navigate('OTPVerify', { aadhaar, txnId, role });
     }
   };
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.content}>
-        <Image source={require('../../../logo.png')} style={styles.logo} resizeMode="contain" />
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Enter your mobile number to securely login</Text>
+        <Image source={require('@assets/logo.png')} style={styles.logo} resizeMode="contain" />
+        <Text style={styles.title}>Partner Login</Text>
+        <Text style={styles.subtitle}>Enter your Aadhaar number to fetch Live KYC OTP via Sandbox.co.in</Text>
 
         <View style={styles.roleContainer}>
           <TouchableOpacity 
             style={[styles.roleBtn, role === 'Dealer' && styles.roleBtnActive]} 
-            onPress={() => setRole('Dealer')}>
-            <Text style={[styles.roleText, role === 'Dealer' && styles.roleTextActive]}>Dealer/Customer</Text>
+            onPress={() => { setRole('Dealer'); setAadhaar('222222222222'); }}>
+            <Text style={[styles.roleText, role === 'Dealer' && styles.roleTextActive]}>Dealer</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={[styles.roleBtn, role === 'Internal' && styles.roleBtnActive]} 
-            onPress={() => setRole('Internal')}>
+            onPress={() => { setRole('Internal'); setAadhaar('111111111111'); }}>
             <Text style={[styles.roleText, role === 'Internal' && styles.roleTextActive]}>Internal Team</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.prefix}>+91</Text>
+          <Text style={styles.prefix}>UID</Text>
           <TextInput
             style={styles.input}
-            placeholder="Mobile Number"
+            placeholder="12-digit Aadhaar Number"
             placeholderTextColor={COLORS.textMuted}
             keyboardType="number-pad"
-            maxLength={10}
-            value={phone}
-            onChangeText={setPhone}
+            maxLength={12}
+            value={aadhaar}
+            onChangeText={setAadhaar}
           />
         </View>
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleSendOTP} disabled={loading}>
-          <Text style={styles.submitBtnText}>{loading ? 'Sending OTP...' : 'Get OTP'}</Text>
+          <Text style={styles.submitBtnText}>{loading ? 'Generating OTP via Sandbox...' : 'Get OTP'}</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.demoBtn} onPress={() => setPhone('9999999999')}>
-          <Text style={styles.demoText}>Use Demo Number (9999999999)</Text>
+        <TouchableOpacity style={styles.demoBtn} onPress={() => setAadhaar(role === 'Dealer' ? '222222222222' : '111111111111')}>
+          <Text style={styles.demoText}>Use Demo Aadhaar ({role === 'Dealer' ? 'Dealer: 2222' : 'Internal: 1111'})</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

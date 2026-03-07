@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Animated } from 'react-native';
-import { COLORS, FONTS } from '../../constants/theme';
+import { COLORS, FONTS } from '@services/index';
 
 export default function SplashScreen({ navigation }) {
   const fadeAnim = new Animated.Value(0);
@@ -21,7 +21,7 @@ export default function SplashScreen({ navigation }) {
     <View style={styles.container}>
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
         <Image 
-          source={require('../../../logo.png')} 
+          source={require('@assets/logo.png')} 
           style={styles.logo} 
           resizeMode="contain" 
         />
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: COLORS.bg 
+    backgroundColor: '#050505' // Dark color requested by user
   },
   content: {
     alignItems: 'center'

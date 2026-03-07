@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
-import { API_BASE } from '../../constants/apiEndpoints';
+import { COLORS, RADIUS } from '@services/index';
+import apiClient from '@services/index';
 
 export default function Step5_Declaration({ route, navigation }) {
   const { formData } = route.params || {};
@@ -16,19 +16,17 @@ export default function Step5_Declaration({ route, navigation }) {
 
     setSubmitting(true);
     try {
-      // Mock API Submission to the backend we just built
-      // const response = await fetch(`${API_BASE}/application/submit`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
+      await apiClient.patch(`/applications/${formData.applicationId || 'NEW_APP'}/step`, {
+        step: 5,
+        data: { agreed }
+      });
+
+      await apiClient.post(`/applications/${formData.applicationId || 'NEW_APP'}/submit`);
       
-      setTimeout(() => {
-        setSubmitting(false);
-        navigation.replace('Success');
-      }, 2000);
+      navigation.replace('Success');
       
     } catch (error) {
+      console.log(error);
       setSubmitting(false);
       Alert.alert('Submission Failed', 'Something went wrong. Please try again.');
     }
@@ -37,7 +35,7 @@ export default function Step5_Declaration({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={require('../../../logo.png')} style={styles.headerLogo} resizeMode="contain" />
+        <Image source={require('@assets/logo.png')} style={styles.headerLogo} resizeMode="contain" />
         <Text style={styles.headerTitle}>Step 5: Review & Submit</Text>
         <Text style={styles.headerSubtitle}>Please review your application details</Text>
       </View>
@@ -45,18 +43,18 @@ export default function Step5_Declaration({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
         <View style={styles.summaryCard}>
-          <Text style={styles.sectionTitle}>Business Profile</Text>
+          <Text style={styles.sectionTitle}>Applicant Profile</Text>
           <View style={styles.row}>
-            <Text style={styles.label}>Legal Name</Text>
-            <Text style={styles.value}>{formData?.legalName || '-'}</Text>
+            <Text style={styles.label}>Name</Text>
+            <Text style={styles.value}>{formData?.name || '-'}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Trade Name</Text>
-            <Text style={styles.value}>{formData?.tradeName || '-'}</Text>
+            <Text style={styles.label}>Date of Birth</Text>
+            <Text style={styles.value}>{formData?.dob || '-'}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Contact</Text>
-            <Text style={styles.value}>{formData?.contactName || '-'}</Text>
+            <Text style={styles.label}>Business Name</Text>
+            <Text style={styles.value}>{formData?.gstInfo?.tradeName || formData?.gstInfo?.legalName || '-'}</Text>
           </View>
         </View>
 

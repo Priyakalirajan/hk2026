@@ -19,7 +19,7 @@ Orientbell Limited frequently partners with new dealers and corporate customers.
 
 **OBL SwiftOnboard** addresses this by providing:
 *   **Digital Self-Service Onboarding:** A web/mobile interface to digitally submit profiles and supporting documents, eliminating hard-copy forms.
-*   **Automated KYC & Data Verification:** Real-time API validation of PAN, GST, Aadhaar, Passport, and Bank Accounts (Penny Drop).
+*   **Automated KYC & Data Verification:** Real-time API validation (PAN, GSTIN, Aadhaar OTP, Bank Penny Drop, Passport) powered by **Sandbox.co.in**.
 *   **Cross-Functional Approval Workflow:** Automated routing through Sales → Finance & KYC → Legal → Credit Control → IT.
 *   **Custom Admin Panel & DB:** Verified data is stored securely in a custom PostgreSQL database managed via the admin panel.
 *   **Communication & Visibility Engine:** Automated SMS/Email notifications and a real-time "Application Tracker".
@@ -51,9 +51,10 @@ OBL SwiftOnboard replaces the manual paper-based process. It operates as a hub c
 *   **FR-FORM-09/10:** Regex validation for PAN and GSTIN before API calls.
 
 ### 3.3 KYC & Document Verification
-*   **FR-KYC-01/02:** Integrate PAN, GSTIN, and Passport verification APIs.
-*   **FR-KYC-03:** Aadhaar verification via OTP. Aadhaar numbers must be masked (XXXX XXXX XXXX).
-*   **FR-KYC-04:** Bank account verification via Penny Drop method.
+*   **FR-KYC-01/02:** Integrate PAN and GSTIN search APIs via **Sandbox.co.in**.
+*   **FR-KYC-03:** Aadhaar verification via **Sandbox.co.in OKYC OTP**. Aadhaar numbers must be masked (XXXX XXXX XXXX).
+*   **FR-KYC-04:** Bank account verification via Penny Drop method (**Sandbox.co.in Bank Verify**).
+*   **FR-KYC-05:** Identity verification via Passport fetch (**Sandbox.co.in KYC Passport**).
 
 ### 3.4 Approval Workflow
 *   **FR-WF-01/02:** Auto-routing: Sales (4h) → Finance (8h) → Legal (4h) → Credit Control (4h) → IT (2h).

@@ -1,19 +1,34 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import { COLORS, RADIUS } from '../../constants/theme';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { COLORS, RADIUS } from '@services/index';
+import apiClient from '@services/index';
 
 export default function ApplicationList({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('All');
   
+  const [apps, setApps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   const tabs = ['All', 'Sales', 'Finance', 'Legal', 'IT'];
 
-  const apps = [
-    { id: "OBL-849201", dealer: "Rajesh Kumar", type: "Dealer", status: "Finance Approval", date: "Oct 24", flagged: false },
-    { id: "OBL-849190", dealer: "Singh Traders", type: "Corporate", status: "Legal Review", date: "Oct 24", flagged: true },
-    { id: "OBL-849188", dealer: "Sri Tiles", type: "Dealer", status: "Sales Draft", date: "Oct 23", flagged: false },
-    { id: "OBL-849185", dealer: "Metro Ceramics", type: "Dealer", status: "ERP Integration", date: "Oct 22", flagged: false },
-  ];
+  useEffect(() => {
+    const fetchApps = async () => {
+      try {
+        const res = await apiClient.get('/applications');
+        if (res.data?.success) {
+          setApps(res.data.data);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const unsubscribe = navigation.addListener('focus', fetchApps);
+    fetchApps();
+    return unsubscribe;
+  }, [navigation]);
 
   const filteredApps = apps.filter(app => {
     if (activeTab !== 'All' && !app.status.includes(activeTab)) return false;
@@ -57,46 +72,56 @@ export default function ApplicationList({ navigation }) {
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
         
-        <Text style={styles.resultsText}>Showing {filteredApps.length} results</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color={COLORS.accent} style={{ marginTop: 40 }} />
+        ) : (
+          <>
+            <Text style={styles.resultsText}>Showing {filteredApps.length} results</Text>
 
-        {filteredApps.map((app, index) => (
+            {filteredApps.map((app, index) => {
+              const formattedDate = new Date(app.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+              return (
           <TouchableOpacity 
             key={index} 
             style={[styles.appCard, app.flagged && styles.appCardFlagged]}
             activeOpacity={0.8}
+            onPress={() => navigation.navigate('AppDetails', { app })}
           >
-            <View style={styles.cardHeader}>
-              <View style={styles.idBox}>
-                <Text style={styles.appId}>{app.id}</Text>
-                {app.flagged && <Text style={styles.flagIcon}>🚩</Text>}
+              <View style={styles.cardHeader}>
+                <View style={styles.idBox}>
+                  <Text style={styles.appId}>{app.id}</Text>
+                  {app.flagged && <Text style={styles.flagIcon}>🚩</Text>}
+                </View>
+                <Text style={styles.dateText}>{formattedDate}</Text>
               </View>
-              <Text style={styles.dateText}>{app.date}</Text>
-            </View>
-            
-            <View style={styles.cardBody}>
-              <Text style={styles.dealerName}>{app.dealer}</Text>
-              <Text style={styles.dealerType}>{app.type}</Text>
-            </View>
-            
-            <View style={styles.cardFooter}>
-              <View style={styles.statusPill}>
-                <View style={[styles.statusDot, { backgroundColor: app.status.includes('Draft') ? COLORS.textMuted : COLORS.accent }]} />
-                <Text style={styles.statusText}>{app.status}</Text>
+              
+              <View style={styles.cardBody}>
+                <Text style={styles.dealerName}>{app.dealer}</Text>
+                <Text style={styles.dealerType}>{app.type}</Text>
               </View>
-              <TouchableOpacity style={styles.actionBtn}>
-                <Text style={styles.actionBtnText}>Review →</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        ))}
+              
+              <View style={styles.cardFooter}>
+                <View style={styles.statusPill}>
+                  <View style={[styles.statusDot, { backgroundColor: app.status?.includes('DRAFT') ? COLORS.textMuted : COLORS.accent }]} />
+                  <Text style={styles.statusText}>{app.status?.replace(/_/g, ' ')}</Text>
+                </View>
+                <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('AppDetails', { app })}>
+                  <Text style={styles.actionBtnText}>Review →</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+            );
+          })}
 
-        {filteredApps.length === 0 && (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📭</Text>
-            <Text style={styles.emptyTitle}>No applications found</Text>
-            <Text style={styles.emptyText}>Try adjusting your search or filters.</Text>
-          </View>
-        )}
+          {filteredApps.length === 0 && (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>📭</Text>
+              <Text style={styles.emptyTitle}>No applications found</Text>
+              <Text style={styles.emptyText}>Try adjusting your search or filters.</Text>
+            </View>
+          )}
+        </>
+      )}
 
       </ScrollView>
     </View>

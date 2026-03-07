@@ -1,11 +1,12 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { COLORS } from '../constants/theme';
+import { LayoutDashboard, List, User } from 'lucide-react-native';
+import { COLORS } from '@services/index';
 
 import AdminDashboard from '../screens/admin/AdminDashboard';
 import ApplicationList from '../screens/admin/ApplicationList';
-import ERPIntegration from '../screens/admin/ERPIntegration';
+import AdminProfileScreen from '../screens/admin/ProfileScreen';
+import ApplicationDetails from '../screens/admin/ApplicationDetails';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,23 +25,17 @@ export default function AdminStack() {
         tabBarActiveTintColor: COLORS.accent,
         tabBarInactiveTintColor: COLORS.textMuted,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Dashboard') {
-            iconName = focused ? 'podium' : 'podium-outline';
-          } else if (route.name === 'AppList') {
-            iconName = focused ? 'document-text' : 'document-text-outline';
-          } else if (route.name === 'ERP') {
-            iconName = focused ? 'sync-circle' : 'sync-circle-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
+          if (route.name === 'Dashboard') return <LayoutDashboard color={color} size={size} />;
+          if (route.name === 'AppList') return <List color={color} size={size} />;
+          if (route.name === 'Profile') return <User color={color} size={size} />;
+          return null;
         },
       })}
     >
       <Tab.Screen name="Dashboard" component={AdminDashboard} options={{ tabBarLabel: 'Overview' }} />
       <Tab.Screen name="AppList" component={ApplicationList} options={{ tabBarLabel: 'Queue' }} />
-      <Tab.Screen name="ERP" component={ERPIntegration} options={{ tabBarLabel: 'Sync' }} />
+      <Tab.Screen name="Profile" component={AdminProfileScreen} options={{ tabBarLabel: 'Profile' }} />
+      <Tab.Screen name="AppDetails" component={ApplicationDetails} options={{ tabBarButton: () => null, tabBarVisible: false }} />
     </Tab.Navigator>
   );
 }
